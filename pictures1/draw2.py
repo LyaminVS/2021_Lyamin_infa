@@ -33,7 +33,7 @@ def igloo(x, y, size):
     pygame.draw.line(screen, "black", (x + 35 * size, y - 147 * size), (x + 35 * size, y - 100 * size))
 
 
-def salat(x, y):
+def fish(x, y):
     pygame.draw.polygon(screen, (197, 102, 99), ((x, y - 60), (x - 10, y - 50), (x, y - 40)))
     pygame.draw.polygon(screen, (153, 171, 167), ((x - 10, y - 55), (x - 10, y - 65), (x, y - 65), (x + 20, y - 35)))
     pygame.draw.polygon(screen, (153, 171, 167), ((x + 20, y - 35), (x + 20, y - 25), (x + 30, y - 35)))
@@ -41,7 +41,7 @@ def salat(x, y):
     pygame.draw.circle(screen, (153, 171, 167), (x - 5, y - 60), 1)
 
 
-def student(x, y, size):
+def man(x, y, size):
     head_1_rect = pygame.Rect(x - 40 * size, y - 100 * size, 80 * size, 50 * size)
     pygame.draw.ellipse(screen, (220, 220, 220), head_1_rect)
 
@@ -90,7 +90,7 @@ def student(x, y, size):
     pygame.draw.arc(screen, "black", smile_1_rect, np.pi * 5 / 12, np.pi * 7 / 12)
 
 
-def obed(x, y):
+def cat(x, y):
     body_1_rect = pygame.Rect(x + 15, y - 50, 100, 30)
     pygame.draw.ellipse(screen, (140, 140, 140), body_1_rect)
 
@@ -100,7 +100,7 @@ def obed(x, y):
     draw_ellipse_angle(screen, (140, 140, 140), (x + 10, y - 70, 13, 80), -70)
     draw_ellipse_angle(screen, (140, 140, 140), (x + 20, y - 60, 13, 80), -60)
 
-    salat(x, y)
+    fish(x, y)
 
     pygame.draw.polygon(screen, "white", ((x + 10, y - 60), (x + 10, y - 41), (x + 15, y - 71)))
     pygame.draw.polygon(screen, "white", ((x + 20, y - 60), (x + 20, y - 35), (x + 25, y - 71)))
@@ -131,9 +131,9 @@ pygame.draw.polygon(screen, (192, 192, 192), ([0, 0], [600, 0], [600, 400], [0, 
 
 igloo(200, 500, 1)
 
-student(500, 500, 1)
+man(500, 500, 1)
 
-obed(200, 700)
+cat(200, 700)
 
 pygame.display.update()
 clock = pygame.time.Clock()
