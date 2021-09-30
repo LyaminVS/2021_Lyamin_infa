@@ -41,7 +41,7 @@ def salat(x, y):
     pygame.draw.circle(screen, (153, 171, 167), (x - 5, y - 60), 1)
 
 
-def student(x, y, size):
+def student(x, y, size, direction):
     head_1_rect = pygame.Rect(x - 40 * size, y - 100 * size, 80 * size, 50 * size)
     pygame.draw.ellipse(screen, (220, 220, 220), head_1_rect)
 
@@ -80,7 +80,10 @@ def student(x, y, size):
     hand_1_rect = pygame.Rect(x + 15 * size, y - 50 * size, 60 * size, 25 * size)
     pygame.draw.ellipse(screen, (142, 125, 113), hand_1_rect)
 
-    pygame.draw.line(screen, "black", (x - 70 * size, y - 90 * size), (x - 70 * size, y + 40 * size))
+    if direction == "left":
+        pygame.draw.line(screen, "black", (x - 70 * size, y - 90 * size), (x - 70 * size, y + 40 * size))
+    if direction == "right":
+        pygame.draw.line(screen, "black", (x + 70 * size, y - 90 * size), (x + 70 * size, y + 40 * size))
 
     pygame.draw.line(screen, "black", (x - 15 * size, y - 80 * size), (x - 5 * size, y - 75 * size))
 
@@ -131,9 +134,25 @@ pygame.draw.polygon(screen, (192, 192, 192), ([0, 0], [600, 0], [600, 400], [0, 
 
 igloo(200, 500, 1)
 
-student(500, 500, 1)
+igloo(180, 550, 0.8)
+
+igloo(260, 600, 0.8)
+
+student(550, 430, 0.5, 'right')
+
+student(400, 400, 0.5, 'left')
+
+student(450, 440, 1, 'right')
+
+student(500, 500, 1, 'right')
+
+student(500, 700, 1.5, 'right')
 
 obed(200, 700)
+
+obed(130, 750)
+
+obed(250, 760)
 
 pygame.display.update()
 clock = pygame.time.Clock()
