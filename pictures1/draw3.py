@@ -1,36 +1,46 @@
 import numpy as np
 import pygame
-import pygame.gfxdraw
 
 
 def draw_ellipse_angle(surface, color, rect, angle):
+    """
+    :param surface: плоскость, на которой будет начерчен повёрнутый овал (например screen).
+    :param color: цвет овала в RGB.
+    :param rect: прямоугольник, в который будет вписан овал,
+                первые 2 числа - координаты левого верхнего угла до поворота,
+                вторые 2 числа - стороны прямоугольника.
+    :param angle: угол поворота по часовой стрелке в градусах, поворот производится относительно центра овала.
+    :return: none.
+
+    чертит повёрнутый овал.
+    """
     target_rect = pygame.Rect(rect)
     shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
-    pygame.draw.ellipse(shape_surf, color, (0, 0, *target_rect.size))
+    pygame.draw.ellipse(shape_surf, color, [0, 0, *target_rect.size])
     rotated_surf = pygame.transform.rotate(shape_surf, angle)
     surface.blit(rotated_surf, rotated_surf.get_rect(center=target_rect.center))
 
 
 def igloo(x, y, size):
-    pygame.draw.circle(screen, "black", (x, y), 150 * size)
-    pygame.draw.circle(screen, (180, 180, 180), (x, y), 149 * size)
-    pygame.draw.rect(screen, "white", (x - 160 * size, y, 320 * size, 160 * size))
+    pygame.draw.circle(screen, (180, 180, 180), (x, y), 1 * size)
+    pygame.draw.circle(screen, (0, 0, 0), (x, y), 1 * size, 1)
+    pygame.draw.rect(screen, (255, 255, 255), (x - 1.07 * size, y, 2.13 * size, 1.07 * size))
 
-    pygame.draw.line(screen, "black", (x - 150 * size, y), (x + 150 * size, y))
-    pygame.draw.line(screen, "black", (x - 140 * size, y - 50 * size), (x + 140 * size, y - 50 * size))
-    pygame.draw.line(screen, "black", (x - 112 * size, y - 100 * size), (x + 112 * size, y - 100 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x - 1 * size, y), (x + 1 * size, y))
+    pygame.draw.line(screen, (0, 0, 0), (x - 0.93 * size, y - 0.33 * size), (x + 0.93 * size, y - 0.33 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x - 0.73 * size, y - 0.67 * size), (x + 0.73 * size, y - 0.67 * size))
 
-    pygame.draw.line(screen, "black", (x - 70 * size, y - 100 * size), (x - 70 * size, y - 50 * size))
-    pygame.draw.line(screen, "black", (x - 0 * size, y - 100 * size), (x - 0 * size, y - 50 * size))
-    pygame.draw.line(screen, "black", (x + 70 * size, y - 100 * size), (x + 70 * size, y - 50 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x - 0.47 * size, y - 0.67 * size), (x - 0.47 * size, y - 0.33 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x - 0 * size, y - 0.66 * size), (x - 0 * size, y - 0.33 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x + 0.47 * size, y - 0.67 * size), (x + 0.47 * size, y - 0.33 * size))
 
-    pygame.draw.line(screen, "black", (x - 90 * size, y - 50 * size), (x - 90 * size, y - 0 * size))
-    pygame.draw.line(screen, "black", (x - 30 * size, y - 50 * size), (x - 30 * size, y - 0 * size))
-    pygame.draw.line(screen, "black", (x + 30 * size, y - 50 * size), (x + 30 * size, y - 0 * size))
-    pygame.draw.line(screen, "black", (x + 90 * size, y - 50 * size), (x + 90 * size, y - 0 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x - 0.6 * size, y - 0.33 * size), (x - 0.6 * size, y - 0 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x - 0.2 * size, y - 0.33 * size), (x - 0.2 * size, y - 0 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x + 0.2 * size, y - 0.33 * size), (x + 0.2 * size, y - 0 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x + 0.6 * size, y - 0.33 * size), (x + 0.6 * size, y - 0 * size))
 
-    pygame.draw.line(screen, "black", (x - 35 * size, y - 147 * size), (x - 35 * size, y - 100 * size))
-    pygame.draw.line(screen, "black", (x + 35 * size, y - 147 * size), (x + 35 * size, y - 100 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x - 0.23 * size, y - 0.97 * size), (x - 0.23 * size, y - 0.67 * size))
+    pygame.draw.line(screen, (0, 0, 0), (x + 0.23 * size, y - 0.97 * size), (x + 0.23 * size, y - 0.67 * size))
 
 
 def fish(x, y):
@@ -132,11 +142,11 @@ screen.fill("white")
 
 pygame.draw.polygon(screen, (192, 192, 192), ([0, 0], [600, 0], [600, 400], [0, 400]))
 
-igloo(200, 500, 1)
+igloo(200, 500, 150)
 
-igloo(180, 550, 0.8)
+igloo(180, 550, 120)
 
-igloo(260, 600, 0.8)
+igloo(260, 600, 120)
 
 man(550, 430, 0.5, 'right')
 
