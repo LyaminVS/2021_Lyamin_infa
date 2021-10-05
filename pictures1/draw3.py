@@ -7,8 +7,8 @@ def draw_ellipse_angle(surface, color, rect, angle):
     :param surface: плоскость, на которой будет начерчен повёрнутый овал (например screen).
     :param color: цвет овала в RGB.
     :param rect: прямоугольник, в который будет вписан овал,
-                первые 2 числа - координаты левого верхнего угла до поворота,
-                вторые 2 числа - стороны прямоугольника.
+        первые 2 числа - координаты левого верхнего угла до поворота,
+        вторые 2 числа - стороны прямоугольника.
     :param angle: угол поворота по часовой стрелке в градусах, поворот производится относительно центра овала.
     :return: none.
 
@@ -21,39 +21,95 @@ def draw_ellipse_angle(surface, color, rect, angle):
     surface.blit(rotated_surf, rotated_surf.get_rect(center=target_rect.center))
 
 
+def gray(a):
+    """
+    :param a: отвечает за тон серого цвета (0 - чёрный, 255 - белый)
+    :return: серый цвет в RGB
+
+    возвращает серый цвет
+    """
+    return a, a, a
+
+
+def half_circle_for_igloo(x, y, size):
+    """
+    :param x: x координата центра полукруга
+    :param y: y координата центра полукруга
+    :param size: радиус полукруга
+    :return: none
+
+    чертит полуокружность для иглу
+    """
+    pygame.draw.circle(screen, gray(180), (x, y), 1 * size)
+    pygame.draw.circle(screen, "black", (x, y), 1 * size, 1)
+    pygame.draw.rect(screen, "white", (x - 1 * size, y, 2 * size, 1 * size))
+
+
+def horizontal_lines_for_igloo(x, y, size):
+    """
+    :param x: x координата центра полукруга
+    :param y: y координата центра полукруга
+    :param size: полукруга
+    :return: none
+
+    чертит горизонтальные отрезки для иглу
+    """
+    x_1, y_1 = 0.94, 0.33  # x_1 ** 2 + y_1 ** 2 = 1, координаты конца отрезка относительно середины полуокружности
+    x_2, y_2 = 0.73, 0.67  # x_2 ** 2 + y_2 ** 2 = 1, координаты конца отрезка относительно середины полуокружности
+    pygame.draw.line(screen, "black", (x - 1 * size, y - 0 * size), (x + 1 * size, y - 0 * size))
+    pygame.draw.line(screen, "black", (x - x_1 * size, y - y_1 * size), (x + x_1 * size, y - y_1 * size))
+    pygame.draw.line(screen, "black", (x - x_2 * size, y - y_2 * size), (x + x_2 * size, y - y_2 * size))
+
+
+def vertical_lines_for_igloo(x, y, size):
+    """
+    :param x: x координата центра полукруга
+    :param y: y координата центра полукруга
+    :param size: радиус полукруга
+    :return: none
+
+    чертит вертикальные отрезки для иглу
+    """
+    # верхние отрезки
+    pygame.draw.line(screen, "black", (x - 0.23 * size, y - 0.97 * size), (x - 0.23 * size, y - 0.67 * size))
+    pygame.draw.line(screen, "black", (x + 0.23 * size, y - 0.97 * size), (x + 0.23 * size, y - 0.67 * size))
+    # средние отрезки
+    pygame.draw.line(screen, "black", (x - 0.47 * size, y - 0.67 * size), (x - 0.47 * size, y - 0.33 * size))
+    pygame.draw.line(screen, "black", (x - 0 * size, y - 0.67 * size), (x - 0 * size, y - 0.33 * size))
+    pygame.draw.line(screen, "black", (x + 0.47 * size, y - 0.67 * size), (x + 0.47 * size, y - 0.33 * size))
+    # нижние отрезки
+    pygame.draw.line(screen, "black", (x - 0.6 * size, y - 0.33 * size), (x - 0.6 * size, y - 0 * size))
+    pygame.draw.line(screen, "black", (x - 0.2 * size, y - 0.33 * size), (x - 0.2 * size, y - 0 * size))
+    pygame.draw.line(screen, "black", (x + 0.2 * size, y - 0.33 * size), (x + 0.2 * size, y - 0 * size))
+    pygame.draw.line(screen, "black", (x + 0.6 * size, y - 0.33 * size), (x + 0.6 * size, y - 0 * size))
+
+
 def igloo(x, y, size):
-    pygame.draw.circle(screen, (180, 180, 180), (x, y), 1 * size)
-    pygame.draw.circle(screen, (0, 0, 0), (x, y), 1 * size, 1)
-    pygame.draw.rect(screen, (255, 255, 255), (x - 1.07 * size, y, 2.13 * size, 1.07 * size))
+    """
+    :param x: x координата центра полукруга
+    :param y: y координата центра полукруга
+    :param size: радиус полукруга
+    :return: none
 
-    pygame.draw.line(screen, (0, 0, 0), (x - 1 * size, y), (x + 1 * size, y))
-    pygame.draw.line(screen, (0, 0, 0), (x - 0.93 * size, y - 0.33 * size), (x + 0.93 * size, y - 0.33 * size))
-    pygame.draw.line(screen, (0, 0, 0), (x - 0.73 * size, y - 0.67 * size), (x + 0.73 * size, y - 0.67 * size))
-
-    pygame.draw.line(screen, (0, 0, 0), (x - 0.47 * size, y - 0.67 * size), (x - 0.47 * size, y - 0.33 * size))
-    pygame.draw.line(screen, (0, 0, 0), (x - 0 * size, y - 0.66 * size), (x - 0 * size, y - 0.33 * size))
-    pygame.draw.line(screen, (0, 0, 0), (x + 0.47 * size, y - 0.67 * size), (x + 0.47 * size, y - 0.33 * size))
-
-    pygame.draw.line(screen, (0, 0, 0), (x - 0.6 * size, y - 0.33 * size), (x - 0.6 * size, y - 0 * size))
-    pygame.draw.line(screen, (0, 0, 0), (x - 0.2 * size, y - 0.33 * size), (x - 0.2 * size, y - 0 * size))
-    pygame.draw.line(screen, (0, 0, 0), (x + 0.2 * size, y - 0.33 * size), (x + 0.2 * size, y - 0 * size))
-    pygame.draw.line(screen, (0, 0, 0), (x + 0.6 * size, y - 0.33 * size), (x + 0.6 * size, y - 0 * size))
-
-    pygame.draw.line(screen, (0, 0, 0), (x - 0.23 * size, y - 0.97 * size), (x - 0.23 * size, y - 0.67 * size))
-    pygame.draw.line(screen, (0, 0, 0), (x + 0.23 * size, y - 0.97 * size), (x + 0.23 * size, y - 0.67 * size))
+    чертит иглу в форме полукруга
+    """
+    half_circle_for_igloo(x, y, size)
+    horizontal_lines_for_igloo(x, y, size)
+    vertical_lines_for_igloo(x, y, size)
 
 
 def fish(x, y):
-    pygame.draw.polygon(screen, (197, 102, 99), ((x, y - 60), (x - 10, y - 50), (x, y - 40)))
-    pygame.draw.polygon(screen, (153, 171, 167), ((x - 10, y - 55), (x - 10, y - 65), (x, y - 65), (x + 20, y - 35)))
-    pygame.draw.polygon(screen, (153, 171, 167), ((x + 20, y - 35), (x + 20, y - 25), (x + 30, y - 35)))
+    fish_color_1, fish_color_2 = (153, 171, 167), (197, 102, 99)    # основной цвет рыбы и цвет плавника соответственно
+    pygame.draw.polygon(screen, fish_color_2, ((x, y - 60), (x - 10, y - 50), (x, y - 40)))
+    pygame.draw.polygon(screen, fish_color_1, ((x - 10, y - 55), (x - 10, y - 65), (x, y - 65), (x + 20, y - 35)))
+    pygame.draw.polygon(screen, fish_color_1, ((x + 20, y - 35), (x + 20, y - 25), (x + 30, y - 35)))
     pygame.draw.circle(screen, "blue", (x - 5, y - 60), 3)
-    pygame.draw.circle(screen, (153, 171, 167), (x - 5, y - 60), 1)
+    pygame.draw.circle(screen, fish_color_1, (x - 5, y - 60), 1)
 
 
 def man(x, y, size, direction):
     head_1_rect = pygame.Rect(x - 40 * size, y - 100 * size, 80 * size, 50 * size)
-    pygame.draw.ellipse(screen, (220, 220, 220), head_1_rect)
+    pygame.draw.ellipse(screen, gray(220), head_1_rect)
 
     body_1_rect = pygame.Rect(x - 50 * size, y - 75 * size, 100 * size, 200 * size)
     pygame.draw.ellipse(screen, (142, 125, 113), body_1_rect)
@@ -79,10 +135,7 @@ def man(x, y, size, direction):
     pygame.draw.ellipse(screen, (160, 150, 140), head_2_rect)
 
     head_3_rect = pygame.Rect(x - 20 * size, y - 85 * size, 40 * size, 25 * size)
-    pygame.draw.ellipse(screen, (220, 220, 220), head_3_rect)
-
-    head_3_rect = pygame.Rect(x - 20 * size, y - 85 * size, 40 * size, 25 * size)
-    pygame.draw.ellipse(screen, (220, 220, 220), head_3_rect)
+    pygame.draw.ellipse(screen, gray(220), head_3_rect)
 
     hand_1_rect = pygame.Rect(x - 75 * size, y - 50 * size, 60 * size, 25 * size)
     pygame.draw.ellipse(screen, (142, 125, 113), hand_1_rect)
@@ -105,22 +158,22 @@ def man(x, y, size, direction):
 
 def cat(x, y):
     body_1_rect = pygame.Rect(x + 15, y - 50, 100, 30)
-    pygame.draw.ellipse(screen, (140, 140, 140), body_1_rect)
+    pygame.draw.ellipse(screen, gray(140), body_1_rect)
 
-    draw_ellipse_angle(screen, (140, 140, 140), (x + 100, y - 70, 13, 80), 70)
-    draw_ellipse_angle(screen, (140, 140, 140), (x + 90, y - 60, 13, 80), 60)
+    draw_ellipse_angle(screen, gray(140), (x + 100, y - 70, 13, 80), 70)
+    draw_ellipse_angle(screen, gray(140), (x + 90, y - 60, 13, 80), 60)
 
-    draw_ellipse_angle(screen, (140, 140, 140), (x + 10, y - 70, 13, 80), -70)
-    draw_ellipse_angle(screen, (140, 140, 140), (x + 20, y - 60, 13, 80), -60)
+    draw_ellipse_angle(screen, gray(140), (x + 10, y - 70, 13, 80), -70)
+    draw_ellipse_angle(screen, gray(140), (x + 20, y - 60, 13, 80), -60)
 
     fish(x, y)
 
     pygame.draw.polygon(screen, "white", ((x + 10, y - 60), (x + 10, y - 41), (x + 15, y - 71)))
     pygame.draw.polygon(screen, "white", ((x + 20, y - 60), (x + 20, y - 35), (x + 25, y - 71)))
 
-    draw_ellipse_angle(screen, (140, 140, 140), (x + 5, y - 70, 35, 30), 0)
+    draw_ellipse_angle(screen, gray(140), (x + 5, y - 70, 35, 30), 0)
 
-    draw_ellipse_angle(screen, (140, 140, 140), (x + 120, y - 90, 13, 80), -60)
+    draw_ellipse_angle(screen, gray(140), (x + 120, y - 90, 13, 80), -60)
 
     pygame.draw.circle(screen, "white", (x + 15, y - 59), 4)
     pygame.draw.circle(screen, "white", (x + 30, y - 57), 4)
@@ -128,8 +181,8 @@ def cat(x, y):
     pygame.draw.circle(screen, "black", (x + 17, y - 59), 2)
     pygame.draw.circle(screen, "black", (x + 32, y - 57), 2)
 
-    pygame.draw.polygon(screen, (140, 140, 140), ((x + 30, y - 71), (x + 40, y - 75), (x + 35, y - 60)))
-    pygame.draw.polygon(screen, (140, 140, 140), ((x + 10, y - 60), (x + 10, y - 75), (x + 15, y - 71)))
+    pygame.draw.polygon(screen, gray(140), ((x + 30, y - 71), (x + 40, y - 75), (x + 35, y - 60)))
+    pygame.draw.polygon(screen, gray(140), ((x + 10, y - 60), (x + 10, y - 75), (x + 15, y - 71)))
 
     pygame.draw.circle(screen, "black", (x + 18, y - 47), 2)
 
@@ -140,7 +193,7 @@ FPS = 30
 screen = pygame.display.set_mode((600, 800))
 screen.fill("white")
 
-pygame.draw.polygon(screen, (192, 192, 192), ([0, 0], [600, 0], [600, 400], [0, 400]))
+pygame.draw.polygon(screen, gray(192), ([0, 0], [600, 0], [600, 400], [0, 400]))
 
 igloo(200, 500, 150)
 
