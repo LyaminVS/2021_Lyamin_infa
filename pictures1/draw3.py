@@ -122,6 +122,38 @@ def fish(x, y):
     pygame.draw.circle(screen, fish_color[0], (x + 5, y + 5), 1)
 
 
+def legs(x, y, color, size):
+    """
+    :param x: координата x центральной точки ног
+    :param y: координата y верхней точки ног
+    :param color: цвет ног
+    :param size: длина ног
+    :return: none
+
+    чертит ноги по координатам верхней (по y) центральной (по x) точки указанного цвета указанной длины
+    """
+    d_leg, d_foot = 0.8, 1.6     # расстояние между ногами, стопами
+    wid_leg, wid_foot = 1.2, 0.6   # ширина ноги, стопы
+    len_leg, len_foot = 0.8, 1.2  # длина ноги (без стопы), стопы
+    len_shape = len_foot * 2 + d_foot
+    shape = pygame.Surface((len_shape * size, size), pygame.SRCALPHA)
+    left_leg_rect = pygame.Rect((len_shape / 2 - d_leg * 0.5 - wid_leg) * size, -len_leg * size,
+                                wid_leg * size, len_leg * 2 * size)
+    pygame.draw.ellipse(shape, color, left_leg_rect)
+
+    right_leg_rect = pygame.Rect((len_shape / 2 + d_leg * 0.5) * size, -len_leg * size,
+                                 wid_leg * size, len_leg * 2 * size)
+    pygame.draw.ellipse(shape, color, right_leg_rect)
+
+    left_foot_rect = pygame.Rect(0 * size, (1 - wid_foot) * size, len_foot * size, wid_foot * size)
+    pygame.draw.ellipse(shape, color, left_foot_rect)
+
+    right_foot_rect = pygame.Rect((d_foot + len_foot) * size, (1 - wid_foot) * size, len_foot * size, wid_foot * size)
+    pygame.draw.ellipse(shape, color, right_foot_rect)
+
+    screen.blit(shape, shape.get_rect(center=(x, y + 0.5 * size)))
+
+
 def man(x, y, size, direction):
     """
     :param x: координата x середины тела
@@ -143,17 +175,7 @@ def man(x, y, size, direction):
     pygame.draw.ellipse(shape, man_color_clothes[0], (0, 0, body_rect[2], body_rect[3] * 2))
     screen.blit(shape, shape.get_rect(center=body_rect.center))
 
-    leg_1_rect = pygame.Rect(x - 0.4 * size, y + 0.3 * size, 0.3 * size, 0.4 * size)
-    pygame.draw.ellipse(screen, man_color_clothes[0], leg_1_rect)
-
-    leg_2_rect = pygame.Rect(x + 0.1 * size, y + 0.3 * size, 0.3 * size, 0.4 * size)
-    pygame.draw.ellipse(screen, man_color_clothes[0], leg_2_rect)
-
-    leg_3_rect = pygame.Rect(x - 0.5 * size, y + 0.6 * size, 0.3 * size, 0.15 * size)
-    pygame.draw.ellipse(screen, man_color_clothes[0], leg_3_rect)
-
-    leg_4_rect = pygame.Rect(x + 0.2 * size, y + 0.6 * size, 0.3 * size, 0.15 * size)
-    pygame.draw.ellipse(screen, man_color_clothes[0], leg_4_rect)
+    legs(x, y + 0.5 * size, man_color_clothes[0], size / 4)
 
     pygame.draw.rect(screen, man_color_clothes[1], pygame.Rect(x - 0.5 * size, y + 0.35 * size, 1 * size, 0.15 * size))
     pygame.draw.rect(screen, man_color_clothes[1], pygame.Rect(x - 0.1 * size, y - 0.35 * size, 0.2 * size, 0.7 * size))
