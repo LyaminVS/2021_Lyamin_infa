@@ -153,6 +153,78 @@ def legs(x, y, color, size):
     pygame.draw.ellipse(screen, color, right_foot_rect)
 
 
+def face(x, y, size):
+    """
+    :param x: координата x центра лица
+    :param y: координата y верхней точки лица
+    :param size: численно равно расстоянию между глазами, задаёт размер всего лица
+    :return: none
+
+    чертит лицо человека по координатам верхней (по y) центральной (по x) точки и расстоянию между глазами
+    """
+    smile_y = 1     # координата y верхней точки рта
+    eye_x, eye_y = 1, 0.5   # размеры глаза по x и y соответственно
+    color = (0, 0, 0)   # цвет линий (чёрный)
+    radius, angle = 5, np.pi / 6    # задают рот через радиус и угловую длину дуги окружности
+    pygame.draw.line(screen, color, (x - (eye_x + 0.5) * size, y + 0 * size), (x - 0.5 * size, y + eye_y * size))
+
+    pygame.draw.line(screen, color, (x + (eye_x + 0.5) * size, y + 0 * size), (x + 0.5 * size, y + eye_y * size))
+
+    smile_rect = pygame.Rect(x - radius * size, y + smile_y * size, radius * 2 * size, radius * 2 * size)
+    pygame.draw.arc(screen, color, smile_rect, (np.pi - angle) * 0.5, (np.pi + angle) * 0.5)
+
+
+def hands(x, y, color, size):
+    """
+    :param color: цвет рук
+    :param x: координата x центра рук
+    :param y: координата y верхней точки рук
+    :param size: численно равно расстоянию ширине рук, задаёт размер рук
+    :return: none
+
+    чертит руки человека указанного цвета по координатам верхней (по y) центральной (по x) точки и их ширине
+    """
+    hand_1_rect = pygame.Rect(x - 3 * size, y - 0 * size, 2.4 * size, 1 * size)
+    pygame.draw.ellipse(screen, color, hand_1_rect)
+
+    hand_1_rect = pygame.Rect(x + 0.6 * size, y - 0 * size, 2.4 * size, 1 * size)
+    pygame.draw.ellipse(screen, color, hand_1_rect)
+
+
+def head_and_body(x, y, size, color):
+    """
+    :param color: массив с цветом
+        [0] - основной цвет
+        [1] - дополнительный цвет
+        [2] - цвет внутри капюшона
+        [3] - цвет головы и меха на капюшоне
+    :param x: координата x центра тела
+    :param y: координата y центра тела
+    :param size: численно равно расстоянию ширине тела, задаёт размер головы и тела
+    :return: none
+
+    чертит голову и тело человека указанного цвета по центральной точки тела и его ширине
+    """
+    # прямоугольники, в которые будут вписываться эллипсы для капюшона и головы
+    head_1_rect = pygame.Rect(x - 0.4 * size, y - 0.75 * size, 0.8 * size, 0.5 * size)
+    head_2_rect = pygame.Rect(x - 0.3 * size, y - 0.68 * size, 0.6 * size, 0.35 * size)
+    head_3_rect = pygame.Rect(x - 0.2 * size, y - 0.6 * size, 0.4 * size, 0.25 * size)
+
+    pygame.draw.ellipse(screen, color[3], head_1_rect)
+
+    body_rect = pygame.Rect(x - 0.5 * size, y - 0.5 * size, 1 * size, 1 * size)
+    shape = pygame.Surface(body_rect.size, pygame.SRCALPHA)
+    pygame.draw.ellipse(shape, color[0], (0, 0, body_rect[2], body_rect[3] * 2))
+    screen.blit(shape, shape.get_rect(center=body_rect.center))
+    # горизонтальная и вертикальная тёмная линия на одежде соответственно
+    pygame.draw.rect(screen, color[1], pygame.Rect(x - 0.5 * size, y + 0.35 * size, 1 * size, 0.15 * size))
+    pygame.draw.rect(screen, color[1], pygame.Rect(x - 0.1 * size, y - 0.35 * size, 0.2 * size, 0.7 * size))
+
+    pygame.draw.ellipse(screen, color[2], head_2_rect)
+
+    pygame.draw.ellipse(screen, color[3], head_3_rect)
+
+
 def man(x, y, size, direction):
     """
     :param x: координата x середины тела
@@ -163,43 +235,18 @@ def man(x, y, size, direction):
 
     чертит человека, по координатам середины и высоте основной фигуры тела, чертит копьё в указанной руке
     """
-    man_color_clothes = (142, 125, 113), (107, 94, 84), (160, 150, 140)
-    # цвет одежды [0] - основной, [1] - дополнительный, [2] - внутри капюшона
-    head_1_rect = pygame.Rect(x - 0.4 * size, y - 0.75 * size, 0.8 * size, 0.5 * size)
+    man_color = (142, 125, 113), (107, 94, 84), (160, 150, 140), (220, 220, 220), (0, 0, 0)
+    # цвет [0] основной, [1] дополнительный, [2] внутри капюшона, [3] самого человека и меха на капюшоне, [4] копья
+    legs(x, y + 0.5 * size, man_color[0], size * 0.25)
 
-    pygame.draw.ellipse(screen, gray(220), head_1_rect)
+    head_and_body(x, y, size, man_color)
 
-    body_rect = pygame.Rect(x - 0.5 * size, y - 0.5 * size, 1 * size, 1 * size)
-    shape = pygame.Surface(body_rect.size, pygame.SRCALPHA)
-    pygame.draw.ellipse(shape, man_color_clothes[0], (0, 0, body_rect[2], body_rect[3] * 2))
-    screen.blit(shape, shape.get_rect(center=body_rect.center))
+    hands(x, y - 0.25 * size, man_color[0], size * 0.25)
 
-    legs(x, y + 0.5 * size, man_color_clothes[0], size / 4)
-
-    pygame.draw.rect(screen, man_color_clothes[1], pygame.Rect(x - 0.5 * size, y + 0.35 * size, 1 * size, 0.15 * size))
-    pygame.draw.rect(screen, man_color_clothes[1], pygame.Rect(x - 0.1 * size, y - 0.35 * size, 0.2 * size, 0.7 * size))
-
-    head_2_rect = pygame.Rect(x - 0.3 * size, y - 0.68 * size, 0.6 * size, 0.35 * size)
-    pygame.draw.ellipse(screen, man_color_clothes[2], head_2_rect)
-
-    head_3_rect = pygame.Rect(x - 0.2 * size, y - 0.6 * size, 0.4 * size, 0.25 * size)
-    pygame.draw.ellipse(screen, gray(220), head_3_rect)
-
-    hand_1_rect = pygame.Rect(x - 0.75 * size, y - 0.25 * size, 0.6 * size, 0.25 * size)
-    pygame.draw.ellipse(screen, man_color_clothes[0], hand_1_rect)
-
-    hand_1_rect = pygame.Rect(x + 0.15 * size, y - 0.25 * size, 0.6 * size, 0.25 * size)
-    pygame.draw.ellipse(screen, man_color_clothes[0], hand_1_rect)
-
-    pygame.draw.line(screen, gray(0), (x + (1 - 2 * (direction == "left")) * 0.7 * size, y - 0.65 * size),
+    pygame.draw.line(screen, man_color[4], (x + (1 - 2 * (direction == "left")) * 0.7 * size, y - 0.65 * size),
                      (x + (1 - 2 * (direction == "left")) * 0.7 * size, y + 0.65 * size))
 
-    pygame.draw.line(screen, gray(0), (x - 0.15 * size, y - 0.55 * size), (x - 0.05 * size, y - 0.5 * size))
-
-    pygame.draw.line(screen, gray(0), (x + 0.15 * size, y - 0.55 * size), (x + 0.05 * size, y - 0.5 * size))
-
-    smile_1_rect = pygame.Rect(x - 0.5 * size, y - 0.45 * size, 1 * size, 1 * size)
-    pygame.draw.arc(screen, gray(0), smile_1_rect, np.pi * 5 / 12, np.pi * 7 / 12)
+    face(x, y - 0.55 * size, size * 0.1)
 
 
 def cat(x, y):
