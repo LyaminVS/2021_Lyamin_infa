@@ -135,23 +135,22 @@ def legs(x, y, color, size):
     d_leg, d_foot = 0.8, 1.6     # расстояние между ногами, стопами
     wid_leg, wid_foot = 1.2, 0.6   # ширина ноги, стопы
     len_leg, len_foot = 0.8, 1.2  # длина ноги (без стопы), стопы
-    len_shape = len_foot * 2 + d_foot
-    shape = pygame.Surface((len_shape * size, size), pygame.SRCALPHA)
-    left_leg_rect = pygame.Rect((len_shape / 2 - d_leg * 0.5 - wid_leg) * size, -len_leg * size,
+
+    left_leg_rect = pygame.Rect(x + (-d_leg * 0.5 - wid_leg) * size, y - len_leg * size,
                                 wid_leg * size, len_leg * 2 * size)
-    pygame.draw.ellipse(shape, color, left_leg_rect)
+    pygame.draw.ellipse(screen, color, left_leg_rect)
 
-    right_leg_rect = pygame.Rect((len_shape / 2 + d_leg * 0.5) * size, -len_leg * size,
+    right_leg_rect = pygame.Rect(x + (d_leg * 0.5) * size, y - len_leg * size,
                                  wid_leg * size, len_leg * 2 * size)
-    pygame.draw.ellipse(shape, color, right_leg_rect)
+    pygame.draw.ellipse(screen, color, right_leg_rect)
 
-    left_foot_rect = pygame.Rect(0 * size, (1 - wid_foot) * size, len_foot * size, wid_foot * size)
-    pygame.draw.ellipse(shape, color, left_foot_rect)
+    left_foot_rect = pygame.Rect(x - 2 * size, y + (1 - wid_foot) * size,
+                                 len_foot * size, wid_foot * size)
+    pygame.draw.ellipse(screen, color, left_foot_rect)
 
-    right_foot_rect = pygame.Rect((d_foot + len_foot) * size, (1 - wid_foot) * size, len_foot * size, wid_foot * size)
-    pygame.draw.ellipse(shape, color, right_foot_rect)
-
-    screen.blit(shape, shape.get_rect(center=(x, y + 0.5 * size)))
+    right_foot_rect = pygame.Rect(x + (d_foot + len_foot - 2) * size, y + (1 - wid_foot) * size,
+                                  len_foot * size, wid_foot * size)
+    pygame.draw.ellipse(screen, color, right_foot_rect)
 
 
 def man(x, y, size, direction):
