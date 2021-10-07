@@ -40,9 +40,12 @@ def half_circle_for_igloo(x, y, size):
 
     чертит полуокружность для иглу
     """
-    pygame.draw.circle(screen, gray(180), (x, y), 1 * size)
-    pygame.draw.circle(screen, "black", (x, y), 1 * size, 1)
-    pygame.draw.rect(screen, "white", (x - 1 * size, y, 2 * size, 1 * size))
+    igloo_color = (180, 180, 180), (0, 0, 0)    # цвет иглу [0] - основной, [1] - цвет границ (чёрный)
+    target_rect = pygame.Rect(x - size, y - size, 2 * size, size)
+    shape = pygame.Surface(target_rect.size, pygame.SRCALPHA)
+    pygame.draw.circle(shape, igloo_color[0], (size, size), 1 * size)
+    pygame.draw.circle(shape, igloo_color[1], (size, size), 1 * size, 1)
+    screen.blit(shape, shape.get_rect(center=target_rect.center))
 
 
 def horizontal_lines_for_igloo(x, y, size):
@@ -56,9 +59,10 @@ def horizontal_lines_for_igloo(x, y, size):
     """
     x_1, y_1 = 0.94, 0.33  # x_1 ** 2 + y_1 ** 2 = 1, координаты конца отрезка относительно середины полуокружности
     x_2, y_2 = 0.73, 0.67  # x_2 ** 2 + y_2 ** 2 = 1, координаты конца отрезка относительно середины полуокружности
-    pygame.draw.line(screen, "black", (x - 1 * size, y - 0 * size), (x + 1 * size, y - 0 * size))
-    pygame.draw.line(screen, "black", (x - x_1 * size, y - y_1 * size), (x + x_1 * size, y - y_1 * size))
-    pygame.draw.line(screen, "black", (x - x_2 * size, y - y_2 * size), (x + x_2 * size, y - y_2 * size))
+    color = (0, 0, 0)  # цвет линий (чёрный)
+    pygame.draw.line(screen, color, (x - 1 * size, y - 0 * size), (x + 1 * size, y - 0 * size))
+    pygame.draw.line(screen, color, (x - x_1 * size, y - y_1 * size), (x + x_1 * size, y - y_1 * size))
+    pygame.draw.line(screen, color, (x - x_2 * size, y - y_2 * size), (x + x_2 * size, y - y_2 * size))
 
 
 def vertical_lines_for_igloo(x, y, size):
@@ -70,18 +74,22 @@ def vertical_lines_for_igloo(x, y, size):
 
     чертит вертикальные отрезки для иглу
     """
+    l_1, l_2, l_3 = 0.46, 0.47, 0.4   # расстояния между вертикальными линиями сверху, посередине и снизу соответственно
+    h_3 = 0.97   # верхние отрезки должны упиратся в дугу окружности, от сюда и эта величина (0.97 ** 2 + 0.23 ** 2 = 1)
+    h_0, h_1, h_2 = 0, 0.33, 0.67   # высота горизонтальных линий
+    color = (0, 0, 0)   # цвет линий (чёрный)
     # верхние отрезки
-    pygame.draw.line(screen, "black", (x - 0.23 * size, y - 0.97 * size), (x - 0.23 * size, y - 0.67 * size))
-    pygame.draw.line(screen, "black", (x + 0.23 * size, y - 0.97 * size), (x + 0.23 * size, y - 0.67 * size))
+    pygame.draw.line(screen, color, (x - l_1 * 0.5 * size, y - h_3 * size), (x - l_1 * 0.5 * size, y - h_2 * size))
+    pygame.draw.line(screen, color, (x + l_1 * 0.5 * size, y - h_3 * size), (x + l_1 * 0.5 * size, y - h_2 * size))
     # средние отрезки
-    pygame.draw.line(screen, "black", (x - 0.47 * size, y - 0.67 * size), (x - 0.47 * size, y - 0.33 * size))
-    pygame.draw.line(screen, "black", (x - 0 * size, y - 0.67 * size), (x - 0 * size, y - 0.33 * size))
-    pygame.draw.line(screen, "black", (x + 0.47 * size, y - 0.67 * size), (x + 0.47 * size, y - 0.33 * size))
+    pygame.draw.line(screen, color, (x - l_2 * size, y - h_2 * size), (x - l_2 * size, y - h_1 * size))
+    pygame.draw.line(screen, color, (x - 0 * size, y - h_2 * size), (x - 0 * size, y - h_1 * size))
+    pygame.draw.line(screen, color, (x + l_2 * size, y - h_2 * size), (x + l_2 * size, y - h_1 * size))
     # нижние отрезки
-    pygame.draw.line(screen, "black", (x - 0.6 * size, y - 0.33 * size), (x - 0.6 * size, y - 0 * size))
-    pygame.draw.line(screen, "black", (x - 0.2 * size, y - 0.33 * size), (x - 0.2 * size, y - 0 * size))
-    pygame.draw.line(screen, "black", (x + 0.2 * size, y - 0.33 * size), (x + 0.2 * size, y - 0 * size))
-    pygame.draw.line(screen, "black", (x + 0.6 * size, y - 0.33 * size), (x + 0.6 * size, y - 0 * size))
+    pygame.draw.line(screen, color, (x - l_3 * 1.5 * size, y - h_1 * size), (x - l_3 * 1.5 * size, y - h_0 * size))
+    pygame.draw.line(screen, color, (x - l_3 * 0.5 * size, y - h_1 * size), (x - l_3 * 0.5 * size, y - h_0 * size))
+    pygame.draw.line(screen, color, (x + l_3 * 0.5 * size, y - h_1 * size), (x + l_3 * 0.5 * size, y - h_0 * size))
+    pygame.draw.line(screen, color, (x + l_3 * 1.5 * size, y - h_1 * size), (x + l_3 * 1.5 * size, y - h_0 * size))
 
 
 def igloo(x, y, size):
@@ -99,61 +107,69 @@ def igloo(x, y, size):
 
 
 def fish(x, y):
-    fish_color_1, fish_color_2 = (153, 171, 167), (197, 102, 99)    # основной цвет рыбы и цвет плавника соответственно
-    pygame.draw.polygon(screen, fish_color_2, ((x, y - 60), (x - 10, y - 50), (x, y - 40)))
-    pygame.draw.polygon(screen, fish_color_1, ((x - 10, y - 55), (x - 10, y - 65), (x, y - 65), (x + 20, y - 35)))
-    pygame.draw.polygon(screen, fish_color_1, ((x + 20, y - 35), (x + 20, y - 25), (x + 30, y - 35)))
-    pygame.draw.circle(screen, "blue", (x - 5, y - 60), 3)
-    pygame.draw.circle(screen, fish_color_1, (x - 5, y - 60), 1)
+    """
+    :param x: координата x верхнего левого угла рыбы
+    :param y: координата y верхнего левого угла рыбы
+    :return: none
+
+    чертит рыбу по координатам её верхнего левого угла
+    """
+    fish_color_1, fish_color_2 = (153, 171, 167), (197, 102, 99)  # основной цвет рыбы и цвет плавника соответственно
+    pygame.draw.polygon(screen, fish_color_2, ((x + 10, y + 5), (x, y + 15), (x + 10, y + 25)))
+    pygame.draw.polygon(screen, fish_color_1, ((x, y + 10), (x, y), (x + 10, y), (x + 30, y + 30)))
+    pygame.draw.polygon(screen, fish_color_1, ((x + 30, y + 30), (x + 30, y + 40), (x + 40, y + 30)))
+    pygame.draw.circle(screen, (0, 0, 255), (x + 5, y + 5), 3)
+    pygame.draw.circle(screen, fish_color_1, (x + 5, y + 5), 1)
 
 
 def man(x, y, size, direction):
+    man_color_clothes = (142, 125, 113), (107, 94, 84), (160, 150, 140)
+    # цвет одежды [0] - основной, [1] - дополнительный, [2] - внутри капюшона
     head_1_rect = pygame.Rect(x - 40 * size, y - 100 * size, 80 * size, 50 * size)
+
     pygame.draw.ellipse(screen, gray(220), head_1_rect)
 
     body_1_rect = pygame.Rect(x - 50 * size, y - 75 * size, 100 * size, 200 * size)
-    pygame.draw.ellipse(screen, (142, 125, 113), body_1_rect)
+    pygame.draw.ellipse(screen, man_color_clothes[0], body_1_rect)
 
-    pygame.draw.rect(screen, "white", pygame.Rect(x - 50 * size, y + 10 * size, 100 * size, 120 * size))
+    pygame.draw.rect(screen, gray(255), pygame.Rect(x - 50 * size, y + 10 * size, 100 * size, 120 * size))
 
     leg_1_rect = pygame.Rect(x - 40 * size, y + 5 * size, 30 * size, 40 * size)
-    pygame.draw.ellipse(screen, (142, 125, 113), leg_1_rect)
+    pygame.draw.ellipse(screen, man_color_clothes[0], leg_1_rect)
 
     leg_2_rect = pygame.Rect(x + 10 * size, y + 5 * size, 30 * size, 40 * size)
-    pygame.draw.ellipse(screen, (142, 125, 113), leg_2_rect)
+    pygame.draw.ellipse(screen, man_color_clothes[0], leg_2_rect)
 
     leg_3_rect = pygame.Rect(x - 50 * size, y + 35 * size, 30 * size, 15 * size)
-    pygame.draw.ellipse(screen, (142, 125, 113), leg_3_rect)
+    pygame.draw.ellipse(screen, man_color_clothes[0], leg_3_rect)
 
     leg_4_rect = pygame.Rect(x + 20 * size, y + 35 * size, 30 * size, 15 * size)
-    pygame.draw.ellipse(screen, (142, 125, 113), leg_4_rect)
+    pygame.draw.ellipse(screen, man_color_clothes[0], leg_4_rect)
 
-    pygame.draw.rect(screen, (107, 94, 84), pygame.Rect(x - 50 * size, y + 10 * size, 100 * size, 15 * size))
-    pygame.draw.rect(screen, (107, 94, 84), pygame.Rect(x - 10 * size, y - 60 * size, 20 * size, 70 * size))
+    pygame.draw.rect(screen, man_color_clothes[1], pygame.Rect(x - 50 * size, y + 10 * size, 100 * size, 15 * size))
+    pygame.draw.rect(screen, man_color_clothes[1], pygame.Rect(x - 10 * size, y - 60 * size, 20 * size, 70 * size))
 
     head_2_rect = pygame.Rect(x - 30 * size, y - 93 * size, 60 * size, 35 * size)
-    pygame.draw.ellipse(screen, (160, 150, 140), head_2_rect)
+    pygame.draw.ellipse(screen, man_color_clothes[2], head_2_rect)
 
     head_3_rect = pygame.Rect(x - 20 * size, y - 85 * size, 40 * size, 25 * size)
     pygame.draw.ellipse(screen, gray(220), head_3_rect)
 
     hand_1_rect = pygame.Rect(x - 75 * size, y - 50 * size, 60 * size, 25 * size)
-    pygame.draw.ellipse(screen, (142, 125, 113), hand_1_rect)
+    pygame.draw.ellipse(screen, man_color_clothes[0], hand_1_rect)
 
     hand_1_rect = pygame.Rect(x + 15 * size, y - 50 * size, 60 * size, 25 * size)
-    pygame.draw.ellipse(screen, (142, 125, 113), hand_1_rect)
+    pygame.draw.ellipse(screen, man_color_clothes[0], hand_1_rect)
 
-    if direction == "left":
-        pygame.draw.line(screen, "black", (x - 70 * size, y - 90 * size), (x - 70 * size, y + 40 * size))
-    if direction == "right":
-        pygame.draw.line(screen, "black", (x + 70 * size, y - 90 * size), (x + 70 * size, y + 40 * size))
+    pygame.draw.line(screen, gray(0), (x + (1 - 2 * (direction == "left")) * 70 * size, y - 90 * size),
+                     (x + (1 - 2 * (direction == "left")) * 70 * size, y + 40 * size))
 
-    pygame.draw.line(screen, "black", (x - 15 * size, y - 80 * size), (x - 5 * size, y - 75 * size))
+    pygame.draw.line(screen, gray(0), (x - 15 * size, y - 80 * size), (x - 5 * size, y - 75 * size))
 
-    pygame.draw.line(screen, "black", (x + 15 * size, y - 80 * size), (x + 5 * size, y - 75 * size))
+    pygame.draw.line(screen, gray(0), (x + 15 * size, y - 80 * size), (x + 5 * size, y - 75 * size))
 
     smile_1_rect = pygame.Rect(x - 50 * size, y - 70 * size, 100 * size, 100 * size)
-    pygame.draw.arc(screen, "black", smile_1_rect, np.pi * 5 / 12, np.pi * 7 / 12)
+    pygame.draw.arc(screen, gray(0), smile_1_rect, np.pi * 5 / 12, np.pi * 7 / 12)
 
 
 def cat(x, y):
@@ -166,32 +182,32 @@ def cat(x, y):
     draw_ellipse_angle(screen, gray(140), (x + 10, y - 70, 13, 80), -70)
     draw_ellipse_angle(screen, gray(140), (x + 20, y - 60, 13, 80), -60)
 
-    fish(x, y)
+    fish(x - 10, y - 65)
 
-    pygame.draw.polygon(screen, "white", ((x + 10, y - 60), (x + 10, y - 41), (x + 15, y - 71)))
-    pygame.draw.polygon(screen, "white", ((x + 20, y - 60), (x + 20, y - 35), (x + 25, y - 71)))
+    pygame.draw.polygon(screen, gray(255), ((x + 10, y - 60), (x + 10, y - 41), (x + 15, y - 71)))
+    pygame.draw.polygon(screen, gray(255), ((x + 20, y - 60), (x + 20, y - 35), (x + 25, y - 71)))
 
     draw_ellipse_angle(screen, gray(140), (x + 5, y - 70, 35, 30), 0)
 
     draw_ellipse_angle(screen, gray(140), (x + 120, y - 90, 13, 80), -60)
 
-    pygame.draw.circle(screen, "white", (x + 15, y - 59), 4)
-    pygame.draw.circle(screen, "white", (x + 30, y - 57), 4)
+    pygame.draw.circle(screen, gray(255), (x + 15, y - 59), 4)
+    pygame.draw.circle(screen, gray(255), (x + 30, y - 57), 4)
 
-    pygame.draw.circle(screen, "black", (x + 17, y - 59), 2)
-    pygame.draw.circle(screen, "black", (x + 32, y - 57), 2)
+    pygame.draw.circle(screen, gray(0), (x + 17, y - 59), 2)
+    pygame.draw.circle(screen, gray(0), (x + 32, y - 57), 2)
 
     pygame.draw.polygon(screen, gray(140), ((x + 30, y - 71), (x + 40, y - 75), (x + 35, y - 60)))
     pygame.draw.polygon(screen, gray(140), ((x + 10, y - 60), (x + 10, y - 75), (x + 15, y - 71)))
 
-    pygame.draw.circle(screen, "black", (x + 18, y - 47), 2)
+    pygame.draw.circle(screen, gray(0), (x + 18, y - 47), 2)
 
 
 pygame.init()
 
 FPS = 30
 screen = pygame.display.set_mode((600, 800))
-screen.fill("white")
+screen.fill(gray(255))
 
 pygame.draw.polygon(screen, gray(192), ([0, 0], [600, 0], [600, 400], [0, 400]))
 
