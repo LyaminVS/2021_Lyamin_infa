@@ -2,6 +2,26 @@ import numpy as np
 import pygame
 
 
+def the_end():
+    """
+    :return: none
+
+    выводит изображение до закрытия окна вручную
+    """
+    fps = 30    # частота обновления кадров
+    pygame.display.update()
+    clock = pygame.time.Clock()
+    finished = False
+
+    while not finished:
+        clock.tick(fps)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                finished = True
+
+    pygame.quit()
+
+
 def draw_ellipse_angle(surface, color, rect, angle):
     """
     :param surface: плоскость, на которой будет начерчен повёрнутый овал (например screen).
@@ -30,7 +50,7 @@ def half_circle_for_igloo(x, y, size):
 
     чертит полуокружность для иглу
     """
-    igloo_color = (180, 180, 180), (0, 0, 0)    # цвет иглу [0] - основной, [1] - цвет границ (чёрный)
+    igloo_color = (180, 180, 180), (0, 0, 0)  # цвет иглу [0] - основной, [1] - цвет границ (чёрный)
     target_rect = pygame.Rect(x - size, y - size, 2 * size, size)
     shape = pygame.Surface(target_rect.size, pygame.SRCALPHA)
     pygame.draw.circle(shape, igloo_color[0], (size, size), 1 * size)
@@ -64,10 +84,10 @@ def vertical_lines_for_igloo(x, y, size):
 
     чертит вертикальные отрезки для иглу
     """
-    l_1, l_2, l_3 = 0.46, 0.47, 0.4   # расстояния между вертикальными линиями сверху, посередине и снизу соответственно
-    h_3 = 0.97   # верхние отрезки должны упиратся в дугу окружности, от сюда и эта величина (0.97 ** 2 + 0.23 ** 2 = 1)
-    h_0, h_1, h_2 = 0, 0.33, 0.67   # высота горизонтальных линий
-    color = (0, 0, 0)   # цвет линий (чёрный)
+    l_1, l_2, l_3 = 0.46, 0.47, 0.4  # расстояния между вертикальными линиями сверху, посередине и снизу соответственно
+    h_3 = 0.97  # верхние отрезки должны упиратся в дугу окружности, от сюда и эта величина (0.97 ** 2 + 0.23 ** 2 = 1)
+    h_0, h_1, h_2 = 0, 0.33, 0.67  # высота горизонтальных линий
+    color = (0, 0, 0)  # цвет линий (чёрный)
     # верхние отрезки
     pygame.draw.line(screen, color, (x - l_1 * 0.5 * size, y - h_3 * size), (x - l_1 * 0.5 * size, y - h_2 * size))
     pygame.draw.line(screen, color, (x + l_1 * 0.5 * size, y - h_3 * size), (x + l_1 * 0.5 * size, y - h_2 * size))
@@ -122,8 +142,8 @@ def legs(x, y, color, size):
 
     чертит ноги по координатам верхней (по y) центральной (по x) точки указанного цвета указанной длины
     """
-    d_leg, d_foot = 0.8, 1.6     # расстояние между ногами, стопами
-    wid_leg, wid_foot = 1.2, 0.6   # ширина ноги, стопы
+    d_leg, d_foot = 0.8, 1.6  # расстояние между ногами, стопами
+    wid_leg, wid_foot = 1.2, 0.6  # ширина ноги, стопы
     len_leg, len_foot = 0.8, 1.2  # длина ноги (без стопы), стопы
 
     left_leg_rect = pygame.Rect(x + (-d_leg * 0.5 - wid_leg) * size, y - len_leg * size,
@@ -152,10 +172,10 @@ def face(x, y, size):
 
     чертит лицо человека по координатам верхней (по y) центральной (по x) точки и расстоянию между глазами
     """
-    smile_y = 1     # координата y верхней точки рта
-    eye_x, eye_y = 1, 0.5   # размеры глаза по x и y соответственно
-    color = (0, 0, 0)   # цвет линий (чёрный)
-    radius, angle = 5, np.pi / 6    # задают рот через радиус и угловую длину дуги окружности
+    smile_y = 1  # координата y верхней точки рта
+    eye_x, eye_y = 1, 0.5  # размеры глаза по x и y соответственно
+    color = (0, 0, 0)  # цвет линий (чёрный)
+    radius, angle = 5, np.pi / 6  # задают рот через радиус и угловую длину дуги окружности
     pygame.draw.line(screen, color, (x - (eye_x + 0.5) * size, y + 0 * size), (x - 0.5 * size, y + eye_y * size))
 
     pygame.draw.line(screen, color, (x + (eye_x + 0.5) * size, y + 0 * size), (x + 0.5 * size, y + eye_y * size))
@@ -249,10 +269,10 @@ def cat_paws(x, y_right, color):
 
     чертит лапы по координатам центра правых (дальних) лап соответствующего цвета
     """
-    wid_paw, len_paw = 13, 80   # ширина и длинна лап соответственно
-    angle_left_paw, angle_right_paw = 60, 70    # угол поворота относительно вертикали правых и левых лап соответственно
-    y_left = y_right + 10   # координата y центра левых (ближних) лап
-    d_x_left, d_x_right = 150, 170    # расстояние между центрами левых и правых лап соответственно
+    wid_paw, len_paw = 13, 80  # ширина и длинна лап соответственно
+    angle_left_paw, angle_right_paw = 60, 70  # угол поворота относительно вертикали правых и левых лап соответственно
+    y_left = y_right + 10  # координата y центра левых (ближних) лап
+    d_x_left, d_x_right = 150, 170  # расстояние между центрами левых и правых лап соответственно
     # задние лапы
     draw_ellipse_angle(screen, color, (x + (d_x_right - len_paw) * 0.5, y_right - wid_paw * 0.5, wid_paw, len_paw),
                        angle_right_paw)
@@ -276,13 +296,29 @@ def cat_eyes(x, y, color):
 
     чертит глаза по координате точки между ними соответствующего цвета
     """
-    r_b, r_z = 4, 2     # радиус белка и зрачка соответственно
-    d_x, d_y = 15, 2    # расстояние между центрами глаз по x и y соответственно
+    r_b, r_z = 4, 2  # радиус белка и зрачка соответственно
+    d_x, d_y = 15, 2  # расстояние между центрами глаз по x и y соответственно
     pygame.draw.circle(screen, color[0], (x - d_x * 0.5, y - d_y * 0.5), r_b)
     pygame.draw.circle(screen, color[0], (x + d_x * 0.5, y + d_y * 0.5), r_b)
 
     pygame.draw.circle(screen, color[1], (x - d_x * 0.5 + r_b - r_z, y - d_y * 0.5), r_z)
     pygame.draw.circle(screen, color[1], (x + d_x * 0.5 + r_b - r_z, y + d_y * 0.5), r_z)
+
+
+def cat_teeth(x, y, color):
+    """
+    :param x: координата x точки между кончиками зубов
+    :param y: координата y точки между кончиками зубов
+    :param color: цвет зубов
+    :return: none
+
+    чертит зубы относительно точки между их кончиками
+    """
+    # значащие координаты (кончики) записаны на отдельной строке
+    pygame.draw.polygon(screen, color, ((x - 5, y - 22), (x - 0, y - 33),
+                                        (x - 5, y - 3)))
+    pygame.draw.polygon(screen, color, ((x + 5, y - 22), (x + 10, y - 33),
+                                        (x + 5, y + 3)))
 
 
 def cat(x, y):
@@ -295,35 +331,35 @@ def cat(x, y):
     """
     # цвет [0] основной, [1] белки глаз и зубы (белый), [2] зрачки и нос (чёрный)
     cat_color = (140, 140, 140), (255, 255, 255), (0, 0, 0)
-    body_1_rect = pygame.Rect(x - 50, y - 15, 100, 30)
-    pygame.draw.ellipse(screen, cat_color[0], body_1_rect)
+    body_rect = pygame.Rect(x - 50, y - 15, 100, 30)
+    head_rect = pygame.Rect(x - 60, y - 35, 35, 30)
+    pygame.draw.ellipse(screen, cat_color[0], body_rect)
+    len_tail, wid_tail, ang_tail = 80, 13, 60  # длина, ширина и угол поворота хвоста относительно горизонтали
 
     cat_paws(x - 10, y - 28.5, cat_color[0])
 
     fish(x - 75, y - 30)
 
-    pygame.draw.polygon(screen, cat_color[1], ((x - 55, y - 25), (x - 55, y - 6), (x - 50, y - 36)))
-    pygame.draw.polygon(screen, cat_color[1], ((x - 45, y - 25), (x - 45, y - 0), (x - 40, y - 36)))
-
-    draw_ellipse_angle(screen, cat_color[0], (x - 60, y - 35, 35, 30), 0)
-
-    draw_ellipse_angle(screen, cat_color[0], (x + 55, y - 55, 13, 80), -60)
+    cat_teeth(x - 50, y - 3, cat_color[1])
+    # голова
+    pygame.draw.ellipse(screen, cat_color[0], head_rect)
+    # хвост
+    draw_ellipse_angle(screen, cat_color[0], (x + 55, y - 55, wid_tail, len_tail), -ang_tail)
 
     cat_eyes(x - 42.5, y - 23, cat_color[1:3])
-
+    # уши
     pygame.draw.polygon(screen, cat_color[0], ((x - 35, y - 36), (x - 25, y - 40), (x - 30, y - 25)))
     pygame.draw.polygon(screen, cat_color[0], ((x - 55, y - 25), (x - 55, y - 40), (x - 50, y - 36)))
-
+    # нос
     pygame.draw.circle(screen, cat_color[2], (x - 47, y - 12), 2)
 
 
 pygame.init()
 
-FPS = 30
 screen = pygame.display.set_mode((600, 800))
-screen.fill((255, 255, 255))    # белая земля
+screen.fill((255, 255, 255))  # белая земля
 
-pygame.draw.rect(screen, (192, 192, 192), (0, 0, 600, 400))     # светло серое небо
+pygame.draw.rect(screen, (192, 192, 192), (0, 0, 600, 400))  # светло серое небо
 
 igloo(200, 500, 150)
 
@@ -347,14 +383,4 @@ cat(195, 715)
 
 cat(315, 725)
 
-pygame.display.update()
-clock = pygame.time.Clock()
-finished = False
-
-while not finished:
-    clock.tick(FPS)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            finished = True
-
-pygame.quit()
+the_end()
