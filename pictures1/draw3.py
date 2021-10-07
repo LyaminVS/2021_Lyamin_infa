@@ -114,61 +114,70 @@ def fish(x, y):
 
     чертит рыбу по координатам её верхнего левого угла
     """
-    fish_color_1, fish_color_2 = (153, 171, 167), (197, 102, 99)  # основной цвет рыбы и цвет плавника соответственно
-    pygame.draw.polygon(screen, fish_color_2, ((x + 10, y + 5), (x, y + 15), (x + 10, y + 25)))
-    pygame.draw.polygon(screen, fish_color_1, ((x, y + 10), (x, y), (x + 10, y), (x + 30, y + 30)))
-    pygame.draw.polygon(screen, fish_color_1, ((x + 30, y + 30), (x + 30, y + 40), (x + 40, y + 30)))
+    fish_color = (153, 171, 167), (197, 102, 99)  # основной цвет рыбы и цвет плавника соответственно
+    pygame.draw.polygon(screen, fish_color[1], ((x + 10, y + 5), (x, y + 15), (x + 10, y + 25)))
+    pygame.draw.polygon(screen, fish_color[0], ((x, y + 10), (x, y), (x + 10, y), (x + 30, y + 30)))
+    pygame.draw.polygon(screen, fish_color[0], ((x + 30, y + 30), (x + 30, y + 40), (x + 40, y + 30)))
     pygame.draw.circle(screen, (0, 0, 255), (x + 5, y + 5), 3)
-    pygame.draw.circle(screen, fish_color_1, (x + 5, y + 5), 1)
+    pygame.draw.circle(screen, fish_color[0], (x + 5, y + 5), 1)
 
 
 def man(x, y, size, direction):
+    """
+    :param x: координата x середины тела
+    :param y: координата y середины тела
+    :param size: высота основной фигуры тела
+    :param direction: рука, в которой будет копьё ("left" / "right")
+    :return: none
+
+    чертит человека, по координатам середины и высоте основной фигуры тела, чертит копьё в указанной руке
+    """
     man_color_clothes = (142, 125, 113), (107, 94, 84), (160, 150, 140)
     # цвет одежды [0] - основной, [1] - дополнительный, [2] - внутри капюшона
-    head_1_rect = pygame.Rect(x - 40 * size, y - 100 * size, 80 * size, 50 * size)
+    head_1_rect = pygame.Rect(x - 0.4 * size, y - 0.75 * size, 0.8 * size, 0.5 * size)
 
     pygame.draw.ellipse(screen, gray(220), head_1_rect)
 
-    body_1_rect = pygame.Rect(x - 50 * size, y - 75 * size, 100 * size, 200 * size)
-    pygame.draw.ellipse(screen, man_color_clothes[0], body_1_rect)
+    body_rect = pygame.Rect(x - 0.5 * size, y - 0.5 * size, 1 * size, 1 * size)
+    shape = pygame.Surface(body_rect.size, pygame.SRCALPHA)
+    pygame.draw.ellipse(shape, man_color_clothes[0], (0, 0, body_rect[2], body_rect[3] * 2))
+    screen.blit(shape, shape.get_rect(center=body_rect.center))
 
-    pygame.draw.rect(screen, gray(255), pygame.Rect(x - 50 * size, y + 10 * size, 100 * size, 120 * size))
-
-    leg_1_rect = pygame.Rect(x - 40 * size, y + 5 * size, 30 * size, 40 * size)
+    leg_1_rect = pygame.Rect(x - 0.4 * size, y + 0.3 * size, 0.3 * size, 0.4 * size)
     pygame.draw.ellipse(screen, man_color_clothes[0], leg_1_rect)
 
-    leg_2_rect = pygame.Rect(x + 10 * size, y + 5 * size, 30 * size, 40 * size)
+    leg_2_rect = pygame.Rect(x + 0.1 * size, y + 0.3 * size, 0.3 * size, 0.4 * size)
     pygame.draw.ellipse(screen, man_color_clothes[0], leg_2_rect)
 
-    leg_3_rect = pygame.Rect(x - 50 * size, y + 35 * size, 30 * size, 15 * size)
+    leg_3_rect = pygame.Rect(x - 0.5 * size, y + 0.6 * size, 0.3 * size, 0.15 * size)
     pygame.draw.ellipse(screen, man_color_clothes[0], leg_3_rect)
 
-    leg_4_rect = pygame.Rect(x + 20 * size, y + 35 * size, 30 * size, 15 * size)
+    leg_4_rect = pygame.Rect(x + 0.2 * size, y + 0.6 * size, 0.3 * size, 0.15 * size)
     pygame.draw.ellipse(screen, man_color_clothes[0], leg_4_rect)
 
-    pygame.draw.rect(screen, man_color_clothes[1], pygame.Rect(x - 50 * size, y + 10 * size, 100 * size, 15 * size))
-    pygame.draw.rect(screen, man_color_clothes[1], pygame.Rect(x - 10 * size, y - 60 * size, 20 * size, 70 * size))
+    pygame.draw.rect(screen, man_color_clothes[1], pygame.Rect(x - 0.5 * size, y + 0.35 * size, 1 * size, 0.15 * size))
+    pygame.draw.rect(screen, man_color_clothes[1], pygame.Rect(x - 0.1 * size, y - 0.35 * size, 0.2 * size, 0.7 * size))
 
-    head_2_rect = pygame.Rect(x - 30 * size, y - 93 * size, 60 * size, 35 * size)
+    head_2_rect = pygame.Rect(x - 0.3 * size, y - 0.68 * size, 0.6 * size, 0.35 * size)
     pygame.draw.ellipse(screen, man_color_clothes[2], head_2_rect)
 
-    head_3_rect = pygame.Rect(x - 20 * size, y - 85 * size, 40 * size, 25 * size)
+    head_3_rect = pygame.Rect(x - 0.2 * size, y - 0.6 * size, 0.4 * size, 0.25 * size)
     pygame.draw.ellipse(screen, gray(220), head_3_rect)
 
-    hand_1_rect = pygame.Rect(x - 75 * size, y - 50 * size, 60 * size, 25 * size)
+    hand_1_rect = pygame.Rect(x - 0.75 * size, y - 0.25 * size, 0.6 * size, 0.25 * size)
     pygame.draw.ellipse(screen, man_color_clothes[0], hand_1_rect)
 
-    hand_1_rect = pygame.Rect(x + 15 * size, y - 50 * size, 60 * size, 25 * size)
+    hand_1_rect = pygame.Rect(x + 0.15 * size, y - 0.25 * size, 0.6 * size, 0.25 * size)
     pygame.draw.ellipse(screen, man_color_clothes[0], hand_1_rect)
 
-    pygame.draw.line(screen, gray(0), (x + (1 - 2 * (direction == "left")) * 70 * size, y - 90 * size),
-                     (x + (1 - 2 * (direction == "left")) * 70 * size, y + 40 * size))
+    pygame.draw.line(screen, gray(0), (x + (1 - 2 * (direction == "left")) * 0.7 * size, y - 0.65 * size),
+                     (x + (1 - 2 * (direction == "left")) * 0.7 * size, y + 0.65 * size))
 
-    pygame.draw.line(screen, gray(0), (x - 15 * size, y - 80 * size), (x - 5 * size, y - 75 * size))
+    pygame.draw.line(screen, gray(0), (x - 0.15 * size, y - 0.55 * size), (x - 0.05 * size, y - 0.5 * size))
 
-    pygame.draw.line(screen, gray(0), (x + 15 * size, y - 80 * size), (x + 5 * size, y - 75 * size))
+    pygame.draw.line(screen, gray(0), (x + 0.15 * size, y - 0.55 * size), (x + 0.05 * size, y - 0.5 * size))
 
-    smile_1_rect = pygame.Rect(x - 50 * size, y - 70 * size, 100 * size, 100 * size)
+    smile_1_rect = pygame.Rect(x - 0.5 * size, y - 0.45 * size, 1 * size, 1 * size)
     pygame.draw.arc(screen, gray(0), smile_1_rect, np.pi * 5 / 12, np.pi * 7 / 12)
 
 
@@ -217,15 +226,15 @@ igloo(180, 550, 120)
 
 igloo(260, 600, 120)
 
-man(550, 430, 0.5, 'right')
+man(550, 417.5, 50, 'right')
 
-man(400, 400, 0.5, 'left')
+man(400, 387.5, 50, 'left')
 
-man(450, 440, 1, 'right')
+man(450, 415, 100, 'right')
 
-man(500, 500, 1, 'right')
+man(500, 475, 100, 'right')
 
-man(500, 700, 1.5, 'right')
+man(500, 662.5, 150, 'right')
 
 cat(200, 700)
 
