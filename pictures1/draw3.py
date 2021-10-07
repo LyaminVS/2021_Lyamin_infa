@@ -21,16 +21,6 @@ def draw_ellipse_angle(surface, color, rect, angle):
     surface.blit(rotated_surf, rotated_surf.get_rect(center=target_rect.center))
 
 
-def gray(a):
-    """
-    :param a: отвечает за тон серого цвета (0 - чёрный, 255 - белый)
-    :return: серый цвет в RGB
-
-    возвращает серый цвет
-    """
-    return a, a, a
-
-
 def half_circle_for_igloo(x, y, size):
     """
     :param x: x координата центра полукруга
@@ -251,43 +241,45 @@ def man(x, y, size, direction):
 
 
 def cat(x, y):
+    # цвет [0] основной, [1] белки глаз и зубы (белый), [2] зрачки и нос (чёрный)
+    cat_color = (140, 140, 140), (255, 255, 255), (0, 0, 0)
     body_1_rect = pygame.Rect(x + 15, y - 50, 100, 30)
-    pygame.draw.ellipse(screen, gray(140), body_1_rect)
+    pygame.draw.ellipse(screen, cat_color[0], body_1_rect)
 
-    draw_ellipse_angle(screen, gray(140), (x + 100, y - 70, 13, 80), 70)
-    draw_ellipse_angle(screen, gray(140), (x + 90, y - 60, 13, 80), 60)
+    draw_ellipse_angle(screen, cat_color[0], (x + 100, y - 70, 13, 80), 70)
+    draw_ellipse_angle(screen, cat_color[0], (x + 90, y - 60, 13, 80), 60)
 
-    draw_ellipse_angle(screen, gray(140), (x + 10, y - 70, 13, 80), -70)
-    draw_ellipse_angle(screen, gray(140), (x + 20, y - 60, 13, 80), -60)
+    draw_ellipse_angle(screen, cat_color[0], (x + 10, y - 70, 13, 80), -70)
+    draw_ellipse_angle(screen, cat_color[0], (x + 20, y - 60, 13, 80), -60)
 
     fish(x - 10, y - 65)
 
-    pygame.draw.polygon(screen, gray(255), ((x + 10, y - 60), (x + 10, y - 41), (x + 15, y - 71)))
-    pygame.draw.polygon(screen, gray(255), ((x + 20, y - 60), (x + 20, y - 35), (x + 25, y - 71)))
+    pygame.draw.polygon(screen, cat_color[1], ((x + 10, y - 60), (x + 10, y - 41), (x + 15, y - 71)))
+    pygame.draw.polygon(screen, cat_color[1], ((x + 20, y - 60), (x + 20, y - 35), (x + 25, y - 71)))
 
-    draw_ellipse_angle(screen, gray(140), (x + 5, y - 70, 35, 30), 0)
+    draw_ellipse_angle(screen, cat_color[0], (x + 5, y - 70, 35, 30), 0)
 
-    draw_ellipse_angle(screen, gray(140), (x + 120, y - 90, 13, 80), -60)
+    draw_ellipse_angle(screen, cat_color[0], (x + 120, y - 90, 13, 80), -60)
 
-    pygame.draw.circle(screen, gray(255), (x + 15, y - 59), 4)
-    pygame.draw.circle(screen, gray(255), (x + 30, y - 57), 4)
+    pygame.draw.circle(screen, cat_color[1], (x + 15, y - 59), 4)
+    pygame.draw.circle(screen, cat_color[1], (x + 30, y - 57), 4)
 
-    pygame.draw.circle(screen, gray(0), (x + 17, y - 59), 2)
-    pygame.draw.circle(screen, gray(0), (x + 32, y - 57), 2)
+    pygame.draw.circle(screen, cat_color[2], (x + 17, y - 59), 2)
+    pygame.draw.circle(screen, cat_color[2], (x + 32, y - 57), 2)
 
-    pygame.draw.polygon(screen, gray(140), ((x + 30, y - 71), (x + 40, y - 75), (x + 35, y - 60)))
-    pygame.draw.polygon(screen, gray(140), ((x + 10, y - 60), (x + 10, y - 75), (x + 15, y - 71)))
+    pygame.draw.polygon(screen, cat_color[0], ((x + 30, y - 71), (x + 40, y - 75), (x + 35, y - 60)))
+    pygame.draw.polygon(screen, cat_color[0], ((x + 10, y - 60), (x + 10, y - 75), (x + 15, y - 71)))
 
-    pygame.draw.circle(screen, gray(0), (x + 18, y - 47), 2)
+    pygame.draw.circle(screen, cat_color[2], (x + 18, y - 47), 2)
 
 
 pygame.init()
 
 FPS = 30
 screen = pygame.display.set_mode((600, 800))
-screen.fill(gray(255))
+screen.fill((255, 255, 255))    # белая земля
 
-pygame.draw.polygon(screen, gray(192), ([0, 0], [600, 0], [600, 400], [0, 400]))
+pygame.draw.rect(screen, (192, 192, 192), (0, 0, 600, 400))     # светло серое небо
 
 igloo(200, 500, 150)
 
