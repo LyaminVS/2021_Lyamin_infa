@@ -240,37 +240,81 @@ def man(x, y, size, direction):
     face(x, y - 0.55 * size, size * 0.1)
 
 
+def cat_paws(x, y_right, color):
+    """
+    :param x: координата x центра лап
+    :param y_right: координата y центра правых (дальних) лап
+    :param color: цвет лап
+    :return: none
+
+    чертит лапы по координатам центра правых (дальних) лап соответствующего цвета
+    """
+    wid_paw, len_paw = 13, 80   # ширина и длинна лап соответственно
+    angle_left_paw, angle_right_paw = 60, 70    # угол поворота относительно вертикали правых и левых лап соответственно
+    y_left = y_right + 10   # координата y центра левых (ближних) лап
+    d_x_left, d_x_right = 150, 170    # расстояние между центрами левых и правых лап соответственно
+    # задние лапы
+    draw_ellipse_angle(screen, color, (x + (d_x_right - len_paw) * 0.5, y_right - wid_paw * 0.5, wid_paw, len_paw),
+                       angle_right_paw)
+    draw_ellipse_angle(screen, color, (x + (d_x_left - len_paw) * 0.5, y_left - wid_paw * 0.5, wid_paw, len_paw),
+                       angle_left_paw)
+    # передние лапы
+    draw_ellipse_angle(screen, color, (x - (d_x_right - len_paw) * 0.5, y_right - wid_paw * 0.5, wid_paw, len_paw),
+                       -angle_right_paw)
+    draw_ellipse_angle(screen, color, (x - (d_x_left - len_paw) * 0.5, y_left - wid_paw * 0.5, wid_paw, len_paw),
+                       -angle_left_paw)
+
+
+def cat_eyes(x, y, color):
+    """
+    :param x: координата x точки между глаз
+    :param y: координата y точки между глаз
+    :param color: цвет глаз
+        color[0] - белок
+        color[1] - зрачёк
+    :return: none
+
+    чертит глаза по координате точки между ними соответствующего цвета
+    """
+    r_b, r_z = 4, 2     # радиус белка и зрачка соответственно
+    d_x, d_y = 15, 2    # расстояние между центрами глаз по x и y соответственно
+    pygame.draw.circle(screen, color[0], (x - d_x * 0.5, y - d_y * 0.5), r_b)
+    pygame.draw.circle(screen, color[0], (x + d_x * 0.5, y + d_y * 0.5), r_b)
+
+    pygame.draw.circle(screen, color[1], (x - d_x * 0.5 + r_b - r_z, y - d_y * 0.5), r_z)
+    pygame.draw.circle(screen, color[1], (x + d_x * 0.5 + r_b - r_z, y + d_y * 0.5), r_z)
+
+
 def cat(x, y):
+    """
+    :param x: координата x центра тела
+    :param y: координата y центра тела
+    :return: none
+
+    чертит кота относительно центра его тела
+    """
     # цвет [0] основной, [1] белки глаз и зубы (белый), [2] зрачки и нос (чёрный)
     cat_color = (140, 140, 140), (255, 255, 255), (0, 0, 0)
-    body_1_rect = pygame.Rect(x + 15, y - 50, 100, 30)
+    body_1_rect = pygame.Rect(x - 50, y - 15, 100, 30)
     pygame.draw.ellipse(screen, cat_color[0], body_1_rect)
 
-    draw_ellipse_angle(screen, cat_color[0], (x + 100, y - 70, 13, 80), 70)
-    draw_ellipse_angle(screen, cat_color[0], (x + 90, y - 60, 13, 80), 60)
+    cat_paws(x - 10, y - 28.5, cat_color[0])
 
-    draw_ellipse_angle(screen, cat_color[0], (x + 10, y - 70, 13, 80), -70)
-    draw_ellipse_angle(screen, cat_color[0], (x + 20, y - 60, 13, 80), -60)
+    fish(x - 75, y - 30)
 
-    fish(x - 10, y - 65)
+    pygame.draw.polygon(screen, cat_color[1], ((x - 55, y - 25), (x - 55, y - 6), (x - 50, y - 36)))
+    pygame.draw.polygon(screen, cat_color[1], ((x - 45, y - 25), (x - 45, y - 0), (x - 40, y - 36)))
 
-    pygame.draw.polygon(screen, cat_color[1], ((x + 10, y - 60), (x + 10, y - 41), (x + 15, y - 71)))
-    pygame.draw.polygon(screen, cat_color[1], ((x + 20, y - 60), (x + 20, y - 35), (x + 25, y - 71)))
+    draw_ellipse_angle(screen, cat_color[0], (x - 60, y - 35, 35, 30), 0)
 
-    draw_ellipse_angle(screen, cat_color[0], (x + 5, y - 70, 35, 30), 0)
+    draw_ellipse_angle(screen, cat_color[0], (x + 55, y - 55, 13, 80), -60)
 
-    draw_ellipse_angle(screen, cat_color[0], (x + 120, y - 90, 13, 80), -60)
+    cat_eyes(x - 42.5, y - 23, cat_color[1:3])
 
-    pygame.draw.circle(screen, cat_color[1], (x + 15, y - 59), 4)
-    pygame.draw.circle(screen, cat_color[1], (x + 30, y - 57), 4)
+    pygame.draw.polygon(screen, cat_color[0], ((x - 35, y - 36), (x - 25, y - 40), (x - 30, y - 25)))
+    pygame.draw.polygon(screen, cat_color[0], ((x - 55, y - 25), (x - 55, y - 40), (x - 50, y - 36)))
 
-    pygame.draw.circle(screen, cat_color[2], (x + 17, y - 59), 2)
-    pygame.draw.circle(screen, cat_color[2], (x + 32, y - 57), 2)
-
-    pygame.draw.polygon(screen, cat_color[0], ((x + 30, y - 71), (x + 40, y - 75), (x + 35, y - 60)))
-    pygame.draw.polygon(screen, cat_color[0], ((x + 10, y - 60), (x + 10, y - 75), (x + 15, y - 71)))
-
-    pygame.draw.circle(screen, cat_color[2], (x + 18, y - 47), 2)
+    pygame.draw.circle(screen, cat_color[2], (x - 47, y - 12), 2)
 
 
 pygame.init()
@@ -297,11 +341,11 @@ man(500, 475, 100, 'right')
 
 man(500, 662.5, 150, 'right')
 
-cat(200, 700)
+cat(265, 665)
 
-cat(130, 750)
+cat(195, 715)
 
-cat(250, 760)
+cat(315, 725)
 
 pygame.display.update()
 clock = pygame.time.Clock()
