@@ -128,6 +128,7 @@ while not finished:
                     balls.remove(ball)
                     new_ball(balls)
     store_update(str(score))
+
     for ball in balls:
         ball_update(ball)
 
