@@ -11,7 +11,6 @@ name = input("Введите ваше имя: ")
 screen = pygame.display.set_mode((1200, 800))
 
 game_over = True
-time = 5
 score = 0
 balls = []
 RED = (255, 0, 0)
@@ -40,9 +39,9 @@ def save_file(user_score, user_name):
     for line in lines:
         table[str(line.split(":")[0])] = line.split(":")[1]
     if user_name in table:
-        table[user_name] = max(table[user_name] ,user_score)
+        table["user_name"] = max(table["user_name"], user_score)
     else:
-        table[user_name] = user_score
+        table["user_name"] = user_score
     file.close()
     file = open("record_table", "w")
     for user in table:
@@ -81,12 +80,17 @@ def new_ball(all_balls):
     v_y = randint(-10, 10)
     color = COLORS[randint(0, 5)]
     special = False
-
-    if randint(1, 101) in range(1, 21):
+    square = -1
+    rand = randint(1, 101)
+    if rand in range(1, 21):
         special = True
         v_x = 10
         v_y = 10
         r = 80
+    elif rand in range(21, 41):
+        square = 20
+        v_x = 0
+        v_y = 0
 
     pygame.draw.circle(screen, color, (x, y), r)
     all_balls.append({
@@ -97,6 +101,7 @@ def new_ball(all_balls):
         "v_y": v_y,
         "color": color,
         "special": special,
+        "square": square
     })
 
 
@@ -128,7 +133,15 @@ def ball_update(one_ball):
 
     one_ball["x"] += one_ball["v_x"]
     one_ball["y"] += one_ball["v_y"]
-    pygame.draw.circle(screen, one_ball["color"], (one_ball["x"], one_ball["y"]), one_ball["r"])
+    if one_ball["square"] == -1:
+        pygame.draw.circle(screen, one_ball["color"], (one_ball["x"], one_ball["y"]), one_ball["r"])
+    else:
+        left = one_ball["x"] - one_ball["r"]
+        right = one_ball["x"] + one_ball["r"]
+        bottom = one_ball["y"] - one_ball["r"]
+        top = one_ball["y"] + one_ball["r"]
+        points = ((left, top), (left, bottom), (right, bottom), (right, top))
+        pygame.draw.polygon(screen, one_ball["color"], points)
 
     if one_ball["x"] < one_ball["r"]:
         one_ball["v_x"] = randint(1, 10)
@@ -145,6 +158,14 @@ def ball_update(one_ball):
 
     if one_ball["special"]:
         one_ball["color"] = new_color(one_ball["color"])
+
+    if one_ball["square"] == 0:
+        one_ball["x"] = randint(one_ball["r"], 1200 - one_ball["r"])
+        one_ball["y"] = randint(one_ball["r"], 800 - one_ball["r"])
+        one_ball["square"] = 20
+
+    if one_ball["square"] > 0:
+        one_ball["square"] -= 1
 
     if one_ball["r"] < 5:
         return True
@@ -166,7 +187,8 @@ def special_div(one_ball, all_balls):
         "v_x": one_ball["v_x"],
         "v_y": one_ball["v_y"],
         "color": one_ball["color"],
-        "special": bool(randint(0, 5))
+        "special": bool(randint(0, 5)),
+        "square": one_ball["square"]
     })
     all_balls.append({
         "x": one_ball["x"],
@@ -175,7 +197,8 @@ def special_div(one_ball, all_balls):
         "v_x": -one_ball["v_x"],
         "v_y": -one_ball["v_y"],
         "color": one_ball["color"],
-        "special": bool(randint(0, 5))
+        "special": bool(randint(0, 5)),
+        "square": one_ball["square"]
     })
 
 
@@ -191,6 +214,8 @@ def score_up(one_ball, user_score, all_balls):
     if one_ball["special"]:
         special_div(one_ball, all_balls)
         user_score += (np.log2(80 / one_ball["r"]))
+    elif one_ball["square"]:
+        user_score += 2
     else:
         user_score += 1
     return user_score, all_balls
@@ -243,10 +268,13 @@ while not finished:
             finished = True
         elif event.type == pygame.MOUSEBUTTONDOWN and not game_over:
             for ball in balls:
-                if (event.pos[0] - ball["x"]) ** 2 + (event.pos[1] - ball["y"]) ** 2 <= ball["r"] ** 2:
+                if (event.pos[0] - ball["x"]) ** 2 + (event.pos[1] - ball["y"]) ** 2 <= ball["r"] ** 2 or ball["x"] - \
+                        ball["r"] < event.pos[0] < ball["x"] + ball["r"] and \
+                        ball["y"] - ball["r"] < event.pos[1] < ball["y"] + ball["r"] and ball["square"] > -1:
                     score, balls = score_up(ball, score, balls)
                     balls.remove(ball)
         elif event.type == pygame.MOUSEBUTTONDOWN and 750 > event.pos[0] > 450 > event.pos[1] > 350 and game_over:
+            time = 60
             balls = []
             for i in range(4):
                 new_ball(balls)
