@@ -5,10 +5,13 @@ import numpy as np
 pygame.init()
 
 FPS = 30
+
+name = input("Введите ваше имя: ")
+
 screen = pygame.display.set_mode((1200, 800))
 
 game_over = True
-time = 60
+time = 5
 score = 0
 balls = []
 RED = (255, 0, 0)
@@ -21,6 +24,30 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREY = (100, 100, 100)
 COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
+
+
+def save_file(user_score, user_name):
+    """
+    начинает новую игру при нажатии на кнопку
+
+    :param user_name: имя игрока
+    :param user_score: счет игрока в данный момент
+    :return:
+    """
+    table = dict()
+    file = open("record_table", "r")
+    lines = file.readlines()
+    for line in lines:
+        table[str(line.split(":")[0])] = line.split(":")[1]
+    if user_name in table:
+        table[user_name] = max(table[user_name] ,user_score)
+    else:
+        table[user_name] = user_score
+    file.close()
+    file = open("record_table", "w")
+    for user in table:
+        line = ':'.join([user, str(table[user])])
+        file.write(line)
 
 
 def new_game(user_score):
@@ -46,6 +73,7 @@ def new_ball(all_balls):
     рисует новый шарик в рандомном месте и с рандомным радиусом
     :return:
     """
+
     x = randint(100, 700)
     y = randint(100, 500)
     r = randint(30, 50)
@@ -118,7 +146,7 @@ def ball_update(one_ball):
     if one_ball["special"]:
         one_ball["color"] = new_color(one_ball["color"])
 
-    if one_ball["r"] < 7:
+    if one_ball["r"] < 5:
         return True
     return False
 
@@ -180,10 +208,11 @@ def store_update(user_score):
     screen.blit(text, (50, 50))
 
 
-def time_update(user_time):
+def time_update(user_time, user_score):
     """
     обновляет время, выводимое на экран
 
+    :param user_score: счет игрока
     :param user_time: оставшееся время игры
     :return: закончилась ли игра
     """
@@ -191,6 +220,7 @@ def time_update(user_time):
     text = font.render(user_time, True, (180, 0, 0))
     screen.blit(text, (1050, 50))
     if int(user_time) <= 0:
+        save_file(user_score, name)
         return True
     return False
 
@@ -206,7 +236,7 @@ while not finished:
         new_game(score)
     if not game_over:
         time -= (1 / FPS)
-        game_over = time_update(str(round(time)))
+        game_over = time_update(str(round(time)), score)
     clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -216,7 +246,7 @@ while not finished:
                 if (event.pos[0] - ball["x"]) ** 2 + (event.pos[1] - ball["y"]) ** 2 <= ball["r"] ** 2:
                     score, balls = score_up(ball, score, balls)
                     balls.remove(ball)
-        elif event.type == pygame.MOUSEBUTTONDOWN and 750 > event.pos[0] > 450 > event.pos[1] > 350:
+        elif event.type == pygame.MOUSEBUTTONDOWN and 750 > event.pos[0] > 450 > event.pos[1] > 350 and game_over:
             balls = []
             for i in range(4):
                 new_ball(balls)
