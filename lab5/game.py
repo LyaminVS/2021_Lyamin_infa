@@ -11,6 +11,7 @@ name = input("Введите ваше имя: ")
 screen = pygame.display.set_mode((1200, 800))
 
 game_over = True
+time = 60
 score = 0
 balls = []
 RED = (255, 0, 0)
@@ -39,13 +40,13 @@ def save_file(user_score, user_name):
     for line in lines:
         table[str(line.split(":")[0])] = line.split(":")[1]
     if user_name in table:
-        table["user_name"] = max(table["user_name"], user_score)
+        table[user_name] = max(float(table[user_name]), float(user_score))
     else:
-        table["user_name"] = user_score
+        table[user_name] = int(user_score)
     file.close()
     file = open("record_table", "w")
     for user in table:
-        line = ':'.join([user, str(table[user])])
+        line = ':'.join([user, str(table[user])]) + "\n"
         file.write(line)
 
 
