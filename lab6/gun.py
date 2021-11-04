@@ -1,6 +1,8 @@
 import math
+import random
 import random as rnd
 
+import numpy as np
 import pygame
 
 FPS = 30
@@ -23,7 +25,7 @@ score = 0
 
 
 class Ball:
-    def __init__(self, screen: pygame.Surface, x=40, y=450):
+    def __init__(self, screen: pygame.Surface, x, y):
         """ Конструктор класса ball
 
         Args:
@@ -39,7 +41,7 @@ class Ball:
         self.vy = 0
         self.g = 1
         self.color = rnd.choice(GAME_COLORS)
-        self.live = 30
+        self.live = 100
 
     def move(self):
         """Переместить мяч по прошествии единицы времени.
@@ -50,11 +52,12 @@ class Ball:
         """
         self.x += self.vx
         self.y += self.vy
-        self.vy += self.g
+        if self.vy != 0:
+            self.vy += self.g
 
         if self.y + self.r > 600 - 40:
             if math.fabs(self.vy) < 5:
-                self.y = 600 - 40
+                self.y = 600 - 60
                 self.vy = 0
             self.vy = -math.fabs(self.vy * 0.75)
             self.vx = 0.75 * self.vx
@@ -94,18 +97,80 @@ class Ball:
         return False
 
 
+class BombBall(Ball):
+    def __init__(self, screen, x, y):
+        """
+        конструктор BombBall
+        :param screen: экран, на котором рисуют
+        :param x: координата центра x
+        :param y: координата центра y
+        """
+        super().__init__(screen, x, y)
+        self.explosion_time = 60
+        self.live = 10
+
+    def draw(self):
+        """
+        рисует мяч в данный момент
+        :return:
+        """
+        if self.explosion_time != 0:
+            pygame.draw.circle(
+                self.screen,
+                random.choice(GAME_COLORS),
+                (self.x, self.y),
+                self.r
+            )
+            self.explosion_time -= 1
+
+        else:
+            self.r += 10
+            pygame.draw.circle(
+                self.screen,
+                random.choice(GAME_COLORS),
+                (self.x, self.y),
+                self.r
+            )
+            self.live -= 1
+
+    def move(self):
+        """
+        изменяет координаты мяча
+        :return:
+        """
+        if self.explosion_time == 0:
+            pass
+        else:
+            super().move()
+
+
+class TargetBall(Ball):
+    def __init__(self, screen, x, y):
+        super().__init__(screen, x, y)
+        self.g = 1
+
+    def hit_test(self, obj):
+        return False
+
+
 class Gun:
-    def __init__(self, screen):
+    def __init__(self, screen, x, y):
         """
         Конструктор класса Gun
         :param screen:
         """
         self.screen = screen
-        self.f2_power = 10
+        self.f2_power = 20
         self.f2_on = 0
         self.an = 1
         self.color = GREY
-        self.length = 30
+        self.x1 = x
+        self.y1 = y
+        self.x2 = self.x1 + self.f2_power * math.cos(self.an)
+        self.y2 = self.y1 - self.f2_power * math.sin(self.an)
+        self.rad = 30
+        self.center_x = self.x1 - self.rad * np.cos(self.an)
+        self.center_y = self.y1 + self.rad * np.sin(self.an)
 
     def fire2_start(self):
         """
@@ -121,13 +186,17 @@ class Gun:
         Начальные значения компонент скорости мяча vx и vy зависят от положения мыши.
         :param all_balls: массим содержащий все мячи
         """
-        new_ball = Ball(self.screen)
+
+        if random.randint(1, 100) in range(1, 66):
+            new_ball = Ball(self.screen, self.x2, self.y2)
+        else:
+            new_ball = BombBall(self.screen, self.x2, self.y2)
         new_ball.r += 5
         new_ball.vx = self.f2_power * math.cos(self.an)
         new_ball.vy = -self.f2_power * math.sin(self.an)
         all_balls.append(new_ball)
         self.f2_on = 0
-        self.f2_power = 10
+        self.f2_power = 30
         return all_balls
 
     def targeting(self, click):
@@ -135,27 +204,64 @@ class Gun:
         Прицеливание. Зависит от положения мыши.
         :param click: объект содержащий информацию о нажатии на кнопку мыши
         """
+        delta_y = click.pos[1] - self.y1
+        delta_x = click.pos[0] - self.x1
+
+        self.center_x = self.x1 - self.rad * np.cos(self.an)
+        self.center_y = self.y1 + self.rad * np.sin(self.an)
+
+        self.x2 = self.x1 + self.f2_power * math.cos(self.an)
+        self.y2 = self.y1 - self.f2_power * math.sin(self.an)
+
         if click:
-            self.an = -math.atan((click.pos[1] - 450) / (click.pos[0] - 20))
+            if delta_x != 0:
+                tan = delta_y / delta_x
+                if delta_x > 0:
+                    self.an = -math.atan(tan)
+                else:
+                    self.an = np.pi - math.atan(tan)
+            else:
+                if delta_y < 0:
+                    self.an = np.pi / 2
+                else:
+                    self.an = 3 * np.pi / 2
         if self.f2_on:
             self.color = RED
         else:
             self.color = GREY
+
+    def draw_tank(self):
+        """
+        рисует танк
+        :return:
+        """
+        self.rad = 30
+        pygame.draw.circle(self.screen, BLACK, (self.center_x, self.center_y), self.rad)
+
+    def hit_test(self, ball):
+        """
+        проверяет столкнулся ли мяч с танком
+        :param ball: мяч
+        :return:
+        """
+        if ((self.center_x - ball.x) ** 2 + (self.center_y - ball.y) ** 2) ** 0.5 < self.rad + ball.r:
+            return True
+        return False
 
     def draw(self):
         """
         рисует пушку в данный момент времени
         :return:
         """
-        x1 = 40
-        y1 = 450
-        x2 = x1 + self.f2_power * math.cos(self.an)
-        y2 = y1 - self.f2_power * math.sin(self.an)
+
+        self.draw_tank()
+        self.x2 = self.x1 + self.f2_power * math.cos(self.an)
+        self.y2 = self.y1 - self.f2_power * math.sin(self.an)
         width = 5
-        point1 = (x1 + width * math.sin(self.an), y1 + width * math.cos(self.an))
-        point2 = (x1 - width * math.sin(self.an), y1 - width * math.cos(self.an))
-        point3 = (x2 - width * math.sin(self.an), y2 - width * math.cos(self.an))
-        point4 = (x2 + width * math.sin(self.an), y2 + width * math.cos(self.an))
+        point1 = (self.x1 + width * math.sin(self.an), self.y1 + width * math.cos(self.an))
+        point2 = (self.x1 - width * math.sin(self.an), self.y1 - width * math.cos(self.an))
+        point3 = (self.x2 - width * math.sin(self.an), self.y2 - width * math.cos(self.an))
+        point4 = (self.x2 + width * math.sin(self.an), self.y2 + width * math.cos(self.an))
 
         points = (point1, point2, point3, point4)
 
@@ -173,9 +279,16 @@ class Gun:
         else:
             self.color = GREY
 
+    def move(self, direction):
+        self.x1 += direction
+        self.center_x = self.x1 - self.rad * np.cos(self.an)
+        self.center_y = self.y1 + self.rad * np.sin(self.an)
+        self.x2 = self.x1 + self.f2_power * math.cos(self.an)
+        self.y2 = self.y1 - self.f2_power * math.sin(self.an)
+
 
 class Target:
-    def __init__(self):
+    def __init__(self, screen):
         """
         конструктор класса Target
         """
@@ -187,13 +300,15 @@ class Target:
         self.vx = rnd.randint(-5, 5)
         self.vy = rnd.randint(-5, 5)
         self.color = RED
+        self.screen = screen
+        self.spawn_time = 60
 
     def draw(self):
         """
         функция рисует цель в данный момент времени
         :return:
         """
-        pygame.draw.circle(display, self.color, (self.x, self.y), self.r)
+        pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.r)
 
     def move(self):
         """
@@ -214,6 +329,37 @@ class Target:
 
         if self.y - self.r < 0:
             self.vy = math.fabs(self.vy)
+
+    def spawn_bomb(self, all_balls):
+        if self.spawn_time <= 0:
+            new_ball = TargetBall(self.screen, self.x, self.y)
+            new_ball.r += 5
+            new_ball.vy = 0.1
+            all_balls.append(new_ball)
+            self.spawn_time = 60
+            return all_balls
+        else:
+            self.spawn_time -= 1
+
+
+class TeleportTarget(Target):
+    def __init__(self, screen):
+        """
+        конструктор класса TeleportTarget
+        """
+        super(TeleportTarget, self).__init__(screen)
+        self.teleport_time = 20
+
+    def move(self):
+        """
+        изменяет координаты телепортирующейся цели
+        :return:
+        """
+        self.teleport_time -= 1
+        if self.teleport_time == 0:
+            self.teleport_time = 10
+            self.x = rnd.randint(600, 780)
+            self.y = rnd.randint(300, 550)
 
 
 class Player:
@@ -261,6 +407,18 @@ class Player:
             text1 = font1.render(message, False, BLACK)
             screen.blit(text1, (230, 300))
 
+    @staticmethod
+    def fail_message(screen):
+        """
+        печатает сообщение о проигрыше
+        :param screen:
+        :return:
+        """
+        font1 = pygame.font.Font(None, 36)
+        message = "Вы попали в свою пушку и проиграли"
+        text1 = font1.render(message, False, BLACK)
+        screen.blit(text1, (200, 300))
+
     def update_time(self):
         """
         изменяет время перезапуска раунда
@@ -274,59 +432,85 @@ pygame.init()
 display = pygame.display.set_mode((WIDTH, HEIGHT))
 balls = []
 targets = []
+game_over = False
+round_finished = 0
 player = Player()
 clock = pygame.time.Clock()
-gun = Gun(display)
+guns = [Gun(display, 100, 450), Gun(display, 700, 450)]
 for count in range(2):
-    targets.append(Target())
+    targets.append(Target(display))
 finished = False
-
+k = 1
 while not finished:
     display.fill(WHITE)
-    gun.draw()
+    if game_over and round_finished == 0:
+        player.fail_message(display)
+    for gun in guns:
+        gun.draw()
     round_finished = 1
     for target in targets:
         if target.live == 1:
             target.move()
             target.draw()
             round_finished = 0
+            target.spawn_bomb(balls)
     if player.reset_time == 0 and round_finished == 1:
         player.end_round()
         player.shots = 0
         for count in range(2):
-            targets.append(Target())
+            if rnd.randint(1, 100) in range(1, 33):
+                targets.append(TeleportTarget(display))
+            else:
+                targets.append(Target(display))
     for b in balls:
         b.draw()
 
     font = pygame.font.Font(None, 36)
     text = font.render(str(score), False, BLACK)
     display.blit(text, (50, 50))
-    player.show_message(display)
+    if not game_over:
+        player.show_message(display)
     player.update_time()
-    pygame.display.update()
 
-    clock.tick(FPS)
+    keys = pygame.key.get_pressed()
+
     for event in pygame.event.get():
-
         if event.type == pygame.QUIT:
             finished = True
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            gun.fire2_start()
-        elif event.type == pygame.MOUSEBUTTONUP:
-            balls = gun.fire2_end(balls)
-            player.shot_up()
-        elif event.type == pygame.MOUSEMOTION:
-            gun.targeting(event)
+        if not game_over:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for gun in guns:
+                    gun.fire2_start()
+            elif event.type == pygame.MOUSEBUTTONUP:
+                for gun in guns:
+                    balls = gun.fire2_end(balls)
+                player.shot_up()
+            elif event.type == pygame.MOUSEMOTION:
+                for gun in guns:
+                    gun.targeting(event)
+            if keys[pygame.K_a]:
+                guns[0].move(-3)
+            elif keys[pygame.K_d]:
+                guns[0].move(3)
+            if keys[pygame.K_LEFT]:
+                guns[1].move(-3)
+            elif keys[pygame.K_RIGHT]:
+                guns[1].move(3)
 
     for b in balls:
         b.move()
+        for gun in guns:
+            if gun.hit_test(b):
+                game_over = True
         for target in targets:
             if b.hit_test(target) and target.live and player.reset_time == 0:
                 target.live = 0
                 score = player.score_up()
-        if b.live == 0:
+        if b.live <= 0:
             balls.remove(b)
-
-    gun.power_up()
-
-pygame.quit()
+    for gun in guns:
+        gun.power_up()
+    clock.tick(FPS)
+    pygame.display.update()
+if finished:
+    pygame.quit()
