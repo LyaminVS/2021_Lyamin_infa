@@ -55,9 +55,9 @@ class Ball:
         if self.vy != 0:
             self.vy += self.g
 
-        if self.y + self.r > 600 - 40:
-            if math.fabs(self.vy) < 5:
-                self.y = 600 - 60
+        if self.y + self.r >= 600 - 20:
+            if math.fabs(self.vy) < 4:
+                self.y = 600 - 20 - self.r
                 self.vy = 0
             self.vy = -math.fabs(self.vy * 0.75)
             self.vx = 0.75 * self.vx
